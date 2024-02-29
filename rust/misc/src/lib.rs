@@ -1,7 +1,3 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
-
 pub fn tail_recursive_factorial(n: i32, r: i32) -> i32 {
     if n <= 1 {
         return r;
