@@ -3,5 +3,5 @@
 
 factorial(N) -> factorial(N, 1).
 
-factorial(0, Acc) -> Acc;
+factorial(1, Acc) -> Acc;
 factorial(N, Acc) -> factorial(N-1, N * Acc).
