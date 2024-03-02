@@ -1,7 +1,7 @@
 package org.example;
 
-public final class Library {
-    public boolean someLibraryMethod() {
-        return true;
-    }
+public final class NearestGreaterToRight {
+    public static void nearestGreaterToRight(int arr[]) {
+
+    };
 }
