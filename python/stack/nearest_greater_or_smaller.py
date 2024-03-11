@@ -79,3 +79,30 @@ def ngr_mono(arr):
             res[st.pop()] = arr[i]
         st.append(i)
     return res
+
+
+def nsr_mono(arr):
+    stack, res = [], [-1] * len(arr)
+    for i in range(len(arr)):
+        while stack and arr[stack[-1]] > arr[i]:
+            res[stack.pop()] = arr[i]
+        stack.append(i)
+    return res
+
+
+def ngl_mono(arr):
+    stack, res = [], [-1] * len(arr)
+    for i in range(len(arr) - 1, -1, -1):
+        while stack and arr[stack[-1]] < arr[i]:
+            res[stack.pop()] = arr[i]
+        stack.append(i)
+    return res
+
+
+def nsl_mono(arr):
+    stack, res = [], [-1] * len(arr)
+    for i in range(len(arr) - 1, -1, -1):
+        while stack and arr[stack[-1]] > arr[i]:
+            res[stack.pop()] = arr[i]
+        stack.append(i)
+    return res

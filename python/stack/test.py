@@ -4,7 +4,10 @@ from nearest_greater_or_smaller import (
         nearest_greater_to_the_left as ngl,
         nearest_smaller_to_the_right as nsr,
         nearest_smaller_to_the_left as nsl,
-        ngr_mono
+        ngr_mono,
+        nsr_mono,
+        ngl_mono,
+        nsl_mono
         )
 
 
@@ -54,6 +57,33 @@ class Test(unittest.TestCase):
 
     def test_fifteen(self):
         self.assertEqual([70, 80, 80, -1, -1], ngr_mono([20, 70, 30, 80, 60]))
+
+    def test_sixteen(self):
+        self.assertEqual([-1, 2, -1, -1], nsr_mono([1, 3, 2, 4]))
+
+    def test_seventeen(self):
+        self.assertEqual([4, 3, 2, 1, -1], nsr_mono([5, 4, 3, 2, 1]))
+
+    def test_eighteen(self):
+        self.assertEqual([-1, 30, -1, 60, -1], nsr_mono([20, 70, 30, 80, 60]))
+
+    def test_nineteen(self):
+        self.assertEqual([-1, -1, 3, -1], ngl_mono([1, 3, 2, 4]))
+
+    def test_twenty(self):
+        self.assertEqual([-1, 5, 4, 3, 2], ngl_mono([5, 4, 3, 2, 1]))
+
+    def test_twentyone(self):
+        self.assertEqual([-1, -1, 70, -1, 80], ngl_mono([20, 70, 30, 80, 60]))
+
+    def test_twentytwo(self):
+        self.assertEqual([-1, 1, 1, 2], nsl_mono([1, 3, 2, 4]))
+
+    def test_twentythree(self):
+        self.assertEqual([-1, -1, -1, -1, -1], nsl_mono([5, 4, 3, 2, 1]))
+
+    def test_twentyfour(self):
+        self.assertEqual([-1, 20, 20, 30, 30], nsl_mono([20, 70, 30, 80, 60]))
 
 
 if __name__ == "__main__":
