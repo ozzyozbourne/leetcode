@@ -3,7 +3,8 @@ from nearest_greater_or_smaller import (
         nearest_greater_to_the_right as ngr,
         nearest_greater_to_the_left as ngl,
         nearest_smaller_to_the_right as nsr,
-        nearest_smaller_to_the_left as nsl
+        nearest_smaller_to_the_left as nsl,
+        ngr_mono
         )
 
 
@@ -44,6 +45,15 @@ class Test(unittest.TestCase):
 
     def test_twelve(self):
         self.assertEqual([-1, 30, -1, 60, -1], nsr([20, 70, 30, 80, 60]))
+
+    def test_thirteen(self):
+        self.assertEqual([3, 4, 4, -1], ngr_mono([1, 3, 2, 4]))
+
+    def test_fourteen(self):
+        self.assertEqual([-1, -1, -1, -1, -1], ngr_mono([5, 4, 3, 2, 1]))
+
+    def test_fifteen(self):
+        self.assertEqual([70, 80, 80, -1, -1], ngr_mono([20, 70, 30, 80, 60]))
 
 
 if __name__ == "__main__":

@@ -70,3 +70,12 @@ def nearest_smaller_to_the_left(arr):
                 res.append(stack[-1])
         stack.append(arr[i])
     return res
+
+
+def ngr_mono(arr):
+    st, res = [], [-1]*len(arr)
+    for i in range(len(arr)):
+        while st and arr[st[-1]] < arr[i]:
+            res[st.pop()] = arr[i]
+        st.append(i)
+    return res
