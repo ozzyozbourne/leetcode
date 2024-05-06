@@ -87,4 +87,13 @@ defmodule Misc do
   end
 
 
+  defmodule LC_2839_CheckIfStringsCanBeMadeEqualWithOperationsI do
+    @spec can_be_equal(s1 :: String.t, s2 :: String.t) :: boolean
+    def can_be_equal(<<a1, a2, a3, a4>>, <<b1, b2, b3, b4>>) do
+      Enum.sort([a1, a3]) == Enum.sort([b1, b3]) &&
+      Enum.sort([a2, a4]) == Enum.sort([b2, b4])
+    end
+  end
+
+
 end
