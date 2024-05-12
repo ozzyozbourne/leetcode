@@ -1,6 +1,7 @@
 package easy;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -19,5 +20,28 @@ public final class Easy {
                 };
             }
         };
+    }
+
+    public static int isWinner(final int[] player1, final int[] player2) {
+         return switch (score(Arrays.stream(player1).boxed().toList()).compareTo(score(Arrays.stream(player2).boxed().toList()))){
+           case  1 -> 1;
+           case -1 -> 2;
+           default -> 0;
+        };
+    }
+
+    private static Integer score(final List<Integer> player){
+        return player.stream().reduce(new int[]{0, 0, 0}, Easy::updateAccumulator, (res, x) -> res)[2];
+    }
+    private static int[] updateAccumulator(final int[] res, final int x) {
+        if(res[0] == 10 || res[1] == 10) {
+            res[0] = res[1];
+            res[1] = x;
+            res[2] += 2 * x;
+        }else{
+            res[1] = x;
+            res[2] += x;
+        }return res;
+
     }
 }
