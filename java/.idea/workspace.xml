@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="f180dbf6-fa02-4429-9921-5ba2fe1722ce" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/misc/.settings/org.eclipse.buildship.core.prefs" beforeDir="false" afterPath="$PROJECT_DIR$/misc/.settings/org.eclipse.buildship.core.prefs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/lib/.classpath" beforeDir="false" afterPath="$PROJECT_DIR$/misc/lib/.classpath" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stack/.settings/org.eclipse.buildship.core.prefs" beforeDir="false" afterPath="$PROJECT_DIR$/stack/.settings/org.eclipse.buildship.core.prefs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stack/lib/.classpath" beforeDir="false" afterPath="$PROJECT_DIR$/stack/lib/.classpath" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stack/lib/src/main/java/org/example/NearestGreaterOrSmaller.java" beforeDir="false" afterPath="$PROJECT_DIR$/stack/lib/src/main/java/org/example/NearestGreaterOrSmaller.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/misc/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/misc/settings.gradle.kts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,12 +15,24 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "ozzyozbourne"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "git@github.com:ozzyozbourne/leetcode.git",
+    "accountId": "24fbcc2b-7878-4a06-bf87-5bced1d61f86"
+  }
+}]]></component>
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="2" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 2
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
   <component name="ProjectId" id="2dHq33az1iTnjVsnLMaIqxr1rO7" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -34,6 +45,10 @@
     "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/ozzy/leetcode/java",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
@@ -41,7 +56,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="jdk-21.0.1-openjdk-21.0.1-f644763e9732-2f79fb23" />
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.15989.150" />
+        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-IU-241.15989.150" />
       </set>
     </attachedChunks>
   </component>
@@ -54,6 +70,7 @@
       <option name="presentableId" value="Default" />
       <updated>1709675149484</updated>
       <workItem from="1709675150739" duration="61000" />
+      <workItem from="1715469955799" duration="313000" />
     </task>
     <servers />
   </component>
