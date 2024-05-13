@@ -1,3 +1,4 @@
+#[cfg(test)]
 pub mod lc_2347 {
     pub fn best_poker_hand(ranks: Vec<i32>, suits: Vec<char>) -> String {
         match suits
@@ -18,57 +19,6 @@ pub mod lc_2347 {
             }
         }
     }
-}
-
-pub mod lc_2660 {
-
-    use std::cmp::Ordering::{Equal, Greater, Less};
-
-    pub fn determine_the_winner_of_a_bowling_game(player1: Vec<i32>, player2: Vec<i32>) -> i32 {
-        match score(player1).cmp(&score(player2)) {
-            Greater => 1,
-            Less => 2,
-            Equal => 0,
-        }
-    }
-
-    fn score(player: Vec<i32>) -> i32 {
-        player
-            .into_iter()
-            .fold((0, 0, 0), |(n2, n1, score), x| {
-                if n2 == 0 || n1 == 0 {
-                    (n1, x, score + 2 * x)
-                } else {
-                    (n1, x, score + x)
-                }
-            })
-            .2
-    }
-}
-
-pub mod lc_2828 {
-    pub fn is_acronym(words: Vec<String>, s: String) -> bool {
-        words
-            .into_iter()
-            .flat_map(|string| string.chars().next())
-            .eq(s.chars())
-    }
-}
-
-pub mod lc_58 {
-
-    pub fn length_of_last_word(s: String) -> i32 {
-        s.split_whitespace().next_back().unwrap().len() as i32
-    }
-}
-
-#[cfg(test)]
-mod tests {
-
-    use crate::{
-        lc_2347::best_poker_hand, lc_2660::determine_the_winner_of_a_bowling_game,
-        lc_2828::is_acronym, lc_58::length_of_last_word,
-    };
 
     #[test]
     fn test_lc_2347_one() {
@@ -93,6 +43,33 @@ mod tests {
             "Pair".to_string()
         );
     }
+}
+
+#[cfg(test)]
+pub mod lc_2660 {
+
+    use std::cmp::Ordering::{Equal, Greater, Less};
+
+    pub fn determine_the_winner_of_a_bowling_game(player1: Vec<i32>, player2: Vec<i32>) -> i32 {
+        match score(player1).cmp(&score(player2)) {
+            Greater => 1,
+            Less => 2,
+            Equal => 0,
+        }
+    }
+
+    fn score(player: Vec<i32>) -> i32 {
+        player
+            .into_iter()
+            .fold((0, 0, 0), |(n2, n1, score), x| {
+                if n2 == 0 || n1 == 0 {
+                    (n1, x, score + 2 * x)
+                } else {
+                    (n1, x, score + x)
+                }
+            })
+            .2
+    }
 
     #[test]
     fn test_lc_2660_one() {
@@ -116,6 +93,16 @@ mod tests {
             determine_the_winner_of_a_bowling_game(vec![2, 3], vec![4, 1]),
             0
         );
+    }
+}
+
+#[cfg(test)]
+pub mod lc_2828 {
+    pub fn is_acronym(words: Vec<String>, s: String) -> bool {
+        words
+            .into_iter()
+            .flat_map(|string| string.chars().next())
+            .eq(s.chars())
     }
 
     #[test]
@@ -155,6 +142,14 @@ mod tests {
             ),
             true
         );
+    }
+}
+
+#[cfg(test)]
+pub mod lc_58 {
+
+    pub fn length_of_last_word(s: String) -> i32 {
+        s.split_whitespace().next_back().unwrap().len() as i32
     }
 
     #[test]
