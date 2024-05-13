@@ -46,10 +46,29 @@ pub mod lc_2660 {
     }
 }
 
+pub mod lc_2828 {
+    pub fn is_acronym(words: Vec<String>, s: String) -> bool {
+        words
+            .into_iter()
+            .flat_map(|string| string.chars().next())
+            .eq(s.chars())
+    }
+}
+
+pub mod lc_58 {
+
+    pub fn length_of_last_word(s: String) -> i32 {
+        s.split_whitespace().next_back().unwrap().len() as i32
+    }
+}
+
 #[cfg(test)]
 mod tests {
 
-    use crate::{lc_2347::best_poker_hand, lc_2660::determine_the_winner_of_a_bowling_game};
+    use crate::{
+        lc_2347::best_poker_hand, lc_2660::determine_the_winner_of_a_bowling_game,
+        lc_2828::is_acronym, lc_58::length_of_last_word,
+    };
 
     #[test]
     fn test_lc_2347_one() {
@@ -97,5 +116,62 @@ mod tests {
             determine_the_winner_of_a_bowling_game(vec![2, 3], vec![4, 1]),
             0
         );
+    }
+
+    #[test]
+    fn test_lc_2828_one() {
+        assert_eq!(
+            is_acronym(
+                vec!["alice", "bob", "charlie"]
+                    .iter()
+                    .map(|&s| s.to_string())
+                    .collect(),
+                "abc".to_string()
+            ),
+            true
+        );
+    }
+
+    #[test]
+    fn test_lc_2828_two() {
+        assert_eq!(
+            is_acronym(
+                vec!["an", "apple"].iter().map(|&s| s.to_string()).collect(),
+                "a".to_string()
+            ),
+            false
+        );
+    }
+
+    #[test]
+    fn test_lc_2828_three() {
+        assert_eq!(
+            is_acronym(
+                vec!["never", "gonna", "give", "up", "on", "you"]
+                    .iter()
+                    .map(|&s| s.to_string())
+                    .collect(),
+                "ngguoy".to_string()
+            ),
+            true
+        );
+    }
+
+    #[test]
+    fn test_lc_58_one() {
+        assert_eq!(length_of_last_word("Hello World".to_string()), 5);
+    }
+
+    #[test]
+    fn test_lc_58_two() {
+        assert_eq!(
+            length_of_last_word("   fly me   to   the moon  ".to_string()),
+            4
+        );
+    }
+
+    #[test]
+    fn test_lc_58_three() {
+        assert_eq!(length_of_last_word("luffy is still joyboy".to_string()), 6);
     }
 }

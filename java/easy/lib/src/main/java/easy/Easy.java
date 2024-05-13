@@ -44,4 +44,8 @@ public final class Easy {
         }return res;
 
     }
+
+    public static int lengthOfLastWord(final String s) {
+       return  Arrays.asList(s.split(" ")).getLast().length();
+    }
 }

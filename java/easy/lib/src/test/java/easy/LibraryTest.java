@@ -2,8 +2,7 @@ package easy;
 
 import org.junit.jupiter.api.Test;
 
-import static easy.Easy.bestHand;
-import static easy.Easy.isWinner;
+import static easy.Easy.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public final class LibraryTest {
@@ -30,5 +29,17 @@ public final class LibraryTest {
 
     @Test void testLC2660Three() {
         assertEquals(isWinner(new int[]{2,3}, new int[] {4,1}), 0);
+    }
+
+    @Test void testLC58One() {
+        assertEquals(lengthOfLastWord("Hello World"), 5);
+    }
+
+    @Test void testLC58Two() {
+        assertEquals(lengthOfLastWord("   fly me   to   the moon  "), 4);
+    }
+
+    @Test void testLC58Three() {
+        assertEquals(lengthOfLastWord("luffy is still joyboy"), 6);
     }
 }
