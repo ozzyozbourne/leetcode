@@ -1,6 +1,6 @@
 #[cfg(test)]
-pub mod lc_2347 {
-    pub fn best_poker_hand(ranks: Vec<i32>, suits: Vec<char>) -> String {
+mod lc_2347 {
+    fn best_poker_hand(ranks: Vec<i32>, suits: Vec<char>) -> String {
         match suits
             .into_iter()
             .collect::<std::collections::HashSet<_>>()
@@ -46,11 +46,11 @@ pub mod lc_2347 {
 }
 
 #[cfg(test)]
-pub mod lc_2660 {
+mod lc_2660 {
 
     use std::cmp::Ordering::{Equal, Greater, Less};
 
-    pub fn determine_the_winner_of_a_bowling_game(player1: Vec<i32>, player2: Vec<i32>) -> i32 {
+    fn determine_the_winner_of_a_bowling_game(player1: Vec<i32>, player2: Vec<i32>) -> i32 {
         match score(player1).cmp(&score(player2)) {
             Greater => 1,
             Less => 2,
@@ -97,8 +97,8 @@ pub mod lc_2660 {
 }
 
 #[cfg(test)]
-pub mod lc_2828 {
-    pub fn is_acronym(words: Vec<String>, s: String) -> bool {
+mod lc_2828 {
+    fn is_acronym(words: Vec<String>, s: String) -> bool {
         words
             .into_iter()
             .flat_map(|string| string.chars().next())
@@ -146,9 +146,9 @@ pub mod lc_2828 {
 }
 
 #[cfg(test)]
-pub mod lc_58 {
+mod lc_58 {
 
-    pub fn length_of_last_word(s: String) -> i32 {
+    fn length_of_last_word(s: String) -> i32 {
         s.split_whitespace().next_back().unwrap().len() as i32
     }
 
@@ -168,5 +168,28 @@ pub mod lc_58 {
     #[test]
     fn test_lc_58_three() {
         assert_eq!(length_of_last_word("luffy is still joyboy".to_string()), 6);
+    }
+}
+
+#[cfg(test)]
+mod lc_136 {
+
+    fn single_number(nums: Vec<i32>) -> i32 {
+        nums.into_iter().fold(0, |pre, curr| pre ^ curr)
+    }
+
+    #[test]
+    fn test_lc_136_one() {
+        assert_eq!(single_number(vec![2, 2, 1]), 1);
+    }
+
+    #[test]
+    fn test_lc_136_two() {
+        assert_eq!(single_number(vec![4, 1, 2, 1, 2]), 4);
+    }
+
+    #[test]
+    fn test_lc_136_three() {
+        assert_eq!(single_number(vec![1]), 1);
     }
 }

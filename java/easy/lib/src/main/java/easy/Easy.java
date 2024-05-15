@@ -7,6 +7,7 @@ import java.util.stream.IntStream;
 
 public final class Easy {
 
+    private Easy() {}
     public static String bestHand(final int[] ranks, final char[] suits) {
        return switch (IntStream.range(0, suits.length).mapToObj(i -> suits[i]).collect(Collectors.toSet()).size()) {
             case 1 -> "Flush";
@@ -47,5 +48,11 @@ public final class Easy {
 
     public static int lengthOfLastWord(final String s) {
        return  Arrays.asList(s.split(" ")).getLast().length();
+    }
+
+    public static final class LC136SingleNumber{
+        public static int singleNumber(int[] nums) {
+          return Arrays.stream(nums).reduce(0, (x, y) -> x ^ y);
+        }
     }
 }
