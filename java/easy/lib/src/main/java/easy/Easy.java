@@ -55,4 +55,13 @@ public final class Easy {
           return Arrays.stream(nums).reduce(0, (x, y) -> x ^ y);
         }
     }
+
+    public static void main(String[] args) {
+        int one = 0, two = 0;
+        for(final int  v: new int[] {2, 2, 3, 2}){
+            one = (one ^ v) & ~two;
+            two = (two ^ v) & ~one;
+            System.out.printf("%s\t%s\n", Integer.toBinaryString(one), Integer.toBinaryString(two));
+        }
+    }
 }
