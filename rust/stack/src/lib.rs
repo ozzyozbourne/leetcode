@@ -129,3 +129,101 @@ mod nsl {
         assert_eq!(nsl(vec![20, 70, 30, 80, 60]), vec![-1, 20, 20, 30, 30]);
     }
 }
+
+#[cfg(test)]
+mod lc_20_valid_parentheses {
+
+    use std::collections::{HashMap, VecDeque};
+
+    fn is_valid(s: String) -> bool {
+        let (mut stack, map): (VecDeque<char>, HashMap<char, char>) = (
+            VecDeque::new(),
+            [('}', '{'), (')', '('), (']', '[')]
+                .iter()
+                .cloned()
+                .collect(),
+        );
+        for c in s.chars() {
+            if map.contains_key(&c) {
+                if !stack.is_empty() && *stack.back().unwrap() == *map.get(&c).unwrap() {
+                    _ = stack.pop_back();
+                } else {
+                    return false;
+                }
+            } else {
+                stack.push_back(c);
+            }
+        }
+        stack.is_empty()
+    }
+
+    #[test]
+    fn test_lc_20_one() {
+        assert_eq!(is_valid("()".to_string()), true);
+    }
+
+    #[test]
+    fn test_lc_20_two() {
+        assert_eq!(is_valid("()[]{}".to_string()), true);
+    }
+
+    #[test]
+    fn test_lc_20_three() {
+        assert_eq!(is_valid("(]".to_string()), false);
+    }
+}
+
+#[cfg(test)]
+mod lc_71_simply_path {
+
+    fn simply_path(path: String) -> String {
+        let (mut stack, mut curr) = (Vec::new(), String::new());
+        for c in path.chars().chain(std::iter::once('/')) {
+            if c == '/' {
+                if curr == "..".to_string() {
+                    _ = stack.pop();
+                } else if !curr.is_empty() && curr != ".".to_string() {
+                    stack.push(curr.clone());
+                }
+                curr.clear();
+            } else {
+                curr.push(c);
+            }
+        }
+        format!("/{}", stack.join("/"))
+    }
+
+    #[test]
+    fn test_lc_71_one() {
+        assert_eq!(simply_path("/home/".to_string()), "/home".to_string());
+    }
+
+    #[test]
+    fn test_lc_71_two() {
+        assert_eq!(
+            simply_path("/home//foo/".to_string()),
+            "/home/foo".to_string()
+        );
+    }
+
+    #[test]
+    fn test_lc_71_three() {
+        assert_eq!(
+            simply_path("/home/user/Documents/../Pictures".to_string()),
+            "/home/user/Pictures".to_string()
+        );
+    }
+
+    #[test]
+    fn test_lc_71_four() {
+        assert_eq!(
+            simply_path("/.../a/../b/c/../d/./".to_string()),
+            "/.../b/d".to_string()
+        );
+    }
+
+    #[test]
+    fn test_lc_71_five() {
+        assert_eq!(simply_path("/../".to_string()), "/".to_string());
+    }
+}
