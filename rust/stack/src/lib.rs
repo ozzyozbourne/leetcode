@@ -227,3 +227,45 @@ mod lc_71_simply_path {
         assert_eq!(simply_path("/../".to_string()), "/".to_string());
     }
 }
+
+#[cfg(test)]
+mod lc_496_next_greater_element_i {
+
+    use std::collections::HashMap;
+
+    fn next_greater_element(nums1: Vec<i32>, nums2: Vec<i32>) -> Vec<i32> {
+        let (mut stack, mut res, mut map) = (
+            Vec::<i32>::new(),
+            vec![-1; nums1.len()],
+            HashMap::<i32, usize>::new(),
+        );
+        for (index, value) in nums1.into_iter().enumerate() {
+            map.insert(value, index);
+        }
+        for value in nums2.into_iter() {
+            while !stack.is_empty() && *stack.last().unwrap() < value {
+                res[*map.get(&stack.pop().unwrap()).unwrap()] = value;
+            }
+            if map.contains_key(&value) {
+                stack.push(value);
+            }
+        }
+        res
+    }
+
+    #[test]
+    fn test_lc_496_one() {
+        assert_eq!(
+            next_greater_element(vec![4, 1, 2], vec![1, 3, 4, 2]),
+            vec![-1, 3, -1]
+        );
+    }
+
+    #[test]
+    fn test_lc_496_two() {
+        assert_eq!(
+            next_greater_element(vec![2, 4], vec![1, 2, 3, 4]),
+            vec![3, -1]
+        );
+    }
+}
