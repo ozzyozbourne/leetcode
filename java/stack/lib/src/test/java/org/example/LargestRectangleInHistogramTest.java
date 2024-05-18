@@ -7,8 +7,14 @@ public final class LargestRectangleInHistogramTest {
 
     @Test
     public void One() {
-        final LargestRectangleInHistogram lHistogram = new LargestRectangleInHistogram();
-        assertEquals(10, lHistogram.largestRectangleArea(new int[] { 2, 1, 5, 6, 2, 3, 7 }));
+
+        assertEquals(10, LargestRectangleInHistogram.largestRectangleArea(new int[] { 2, 1, 5, 6, 2, 3, 7 }));
+    }
+
+    @Test
+    public void Two() {
+
+        assertEquals(4, LargestRectangleInHistogram.largestRectangleArea(new int[] { 2, 4 }));
     }
 
 }
