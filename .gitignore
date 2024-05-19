@@ -8,9 +8,17 @@
 **/doc/
 **/log
 **/logs
-*.log
 **/target/
 **/debug/
+
+*.log
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
 
 ##############################
 ## Java
@@ -186,3 +194,9 @@ dmypy.json
 *.py,cover
 *.sage.py
 
+
+##############################
+## Golang
+##############################
+go.work
+go.work.sum
