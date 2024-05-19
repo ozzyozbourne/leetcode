@@ -1,14 +1,14 @@
 use std::{cell::RefCell, collections::VecDeque, rc::Rc};
 
 #[derive(Debug, PartialEq, Eq)]
-struct TreeNode {
-    val: i32,
-    left: Option<Rc<RefCell<TreeNode>>>,
-    right: Option<Rc<RefCell<TreeNode>>>,
+pub struct TreeNode {
+    pub val: i32,
+    pub left: Option<Rc<RefCell<TreeNode>>>,
+    pub right: Option<Rc<RefCell<TreeNode>>>,
 }
 
 impl TreeNode {
-    fn new(val: i32) -> Self {
+    pub fn new(val: i32) -> Self {
         TreeNode {
             val,
             left: None,
@@ -17,7 +17,7 @@ impl TreeNode {
     }
 }
 
-fn vec_to_tree(v: Vec<Option<i32>>) -> Option<Rc<RefCell<TreeNode>>> {
+pub fn vec_to_tree(v: Vec<Option<i32>>) -> Option<Rc<RefCell<TreeNode>>> {
     match v.is_empty() {
         true => None,
         false => {
@@ -61,7 +61,33 @@ mod lc_114_flatten_binary_tree_to_linked_list {
 
     use crate::{vec_to_tree, Rc, RefCell, TreeNode};
 
-    fn flatten(root: &mut Option<Rc<RefCell<TreeNode>>>) {}
+    type Node = Rc<RefCell<TreeNode>>;
+
+    fn flatten(root: &mut Option<Node>) {
+        match root.is_none() {
+            true => {}
+            false => {
+                let mut node = root.as_mut().unwrap().borrow_mut();
+
+                flatten(&mut node.left);
+                flatten(&mut node.right);
+
+                let right = node.right.take();
+                node.right = node.left.take();
+                drop(node);
+
+                let mut cur = root.clone();
+                while let Some(r) = cur {
+                    let mut r = r.borrow_mut();
+                    if r.right.is_none() {
+                        r.right = right;
+                        return;
+                    }
+                    cur = r.right.clone();
+                }
+            }
+        }
+    }
 
     #[test]
     fn test_lc_114_one() {
@@ -84,11 +110,11 @@ mod lc_114_flatten_binary_tree_to_linked_list {
                 None,
                 Some(3),
                 None,
+                Some(4),
+                None,
                 Some(5),
                 None,
                 Some(6),
-                None,
-                Some(6)
             ])
         );
     }
@@ -102,8 +128,8 @@ mod lc_114_flatten_binary_tree_to_linked_list {
 
     #[test]
     fn test_lc_114_three() {
-        let mut tree_node = vec_to_tree(vec![None]);
+        let mut tree_node = vec_to_tree(vec![Some(0)]);
         flatten(&mut tree_node);
-        assert_eq!(tree_node, vec_to_tree(vec![None]));
+        assert_eq!(tree_node, vec_to_tree(vec![Some(0)]));
     }
 }
