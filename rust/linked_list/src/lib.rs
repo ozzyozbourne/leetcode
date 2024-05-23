@@ -64,29 +64,22 @@ mod lc_114_flatten_binary_tree_to_linked_list {
     type Node = Rc<RefCell<TreeNode>>;
 
     fn flatten(root: &mut Option<Node>) {
-        match root.is_none() {
-            true => {}
-            false => {
-                let mut node = root.as_mut().unwrap().borrow_mut();
-
-                flatten(&mut node.left);
-                flatten(&mut node.right);
-
-                let right = node.right.take();
-                node.right = node.left.take();
-                drop(node);
-
-                let mut cur = root.clone();
-                while let Some(r) = cur {
-                    let mut r = r.borrow_mut();
-                    if r.right.is_none() {
-                        r.right = right;
-                        return;
+        fn dfs(node: &mut Option<Node>) -> Option<Node> {
+            match node {
+                None => None,
+                Some(root) => {
+                    let left_tail = dfs(&mut root.borrow_mut().left);
+                    let right_tail = dfs(&mut root.borrow_mut().right);
+                    if let Some(ref left_tail) = left_tail {
+                        left_tail.borrow_mut().right = root.borrow_mut().right.take();
+                        let right_temp = root.borrow_mut().left.take();
+                        root.borrow_mut().right = right_temp;
                     }
-                    cur = r.right.clone();
+                    right_tail.or(left_tail).or(Some(Rc::clone(root)))
                 }
             }
         }
+        dfs(root);
     }
 
     #[test]
