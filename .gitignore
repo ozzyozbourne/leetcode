@@ -27,9 +27,10 @@ local.properties
 gradle-app.setting
 !gradle-wrapper.jar
 
-.idea/
-.idea_modules/
-.settings/
+*.idea/
+*.idea_modules/
+*.settings/
+*.mtj.tmp/
 .metadata
 .classpath
 .project
@@ -37,7 +38,7 @@ gradle-app.setting
 .factorypath
 .gradle
 .gradletasknamecache
-.mtj.tmp/
+
 
 hs_err_pid*
 replay_pid*
@@ -58,7 +59,7 @@ replay_pid*
 ##############################
 ## Visual Studio Code
 ##############################
-.vscode/
+*.vscode/
 .code-workspace
 
 ##############################
@@ -95,7 +96,6 @@ misc-*.tar
 *.o
 *.beam
 *.plt
-*.swp
 *.swo
 *~
 
@@ -113,12 +113,10 @@ Cargo.lock
 #Folder
 **/site
 **/__pycache__/
-**/build/
 **/develop-eggs/
 **/dist/
 **/downloads/
 **/eggs/
-**/lib/
 **/lib64/
 **/parts/
 **/sdist/
@@ -126,7 +124,6 @@ Cargo.lock
 **/wheels/
 **/share/python-wheels/
 **/htmlcov/
-**/cover/
 **/instance/
 **/docs/_build/
 **/env/
@@ -154,15 +151,15 @@ ipython_config.py
 dmypy.json
 
 #Dot Directories
-.eggs/
-.pyre/
-.pytype/
-.tox/
-.nox/
-.hypothesis/
-.pytest_cache/
-.mypy_cache/
-.pybuilder/
+*.eggs/
+*.pyre/
+*.pytype/
+*.tox/
+*.nox/
+*.hypothesis/
+*.pytest_cache/
+*.mypy_cache/
+*.pybuilder/
 
 .spyderproject
 .spyproject
@@ -187,7 +184,6 @@ dmypy.json
 *.spec
 *.py[cod]
 *$py.class
-*.so
 *.mo
 *.pot
 *.cover

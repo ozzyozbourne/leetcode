@@ -2,7 +2,20 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/elixir/misc/.elixir_ls" />
+      <excludeFolder url="file://$MODULE_DIR$/elixir/misc/_build" />
+      <excludeFolder url="file://$MODULE_DIR$/java/easy/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/java/easy/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/java/easy/lib/build" />
+      <excludeFolder url="file://$MODULE_DIR$/java/easy/lib/src/main/resources" />
+      <excludeFolder url="file://$MODULE_DIR$/java/easy/lib/src/test/resources" />
+      <excludeFolder url="file://$MODULE_DIR$/java/misc/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/java/stack/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/java/stack/lib/build" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/linked_list/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/stack/target" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

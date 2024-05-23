@@ -336,3 +336,67 @@ mod lc_32_longest_valid_parentheses {
         assert_eq!(longest_valid_parentheses("".to_string()), 0);
     }
 }
+
+#[cfg(test)]
+mod lc_2696_minimum_string_length_after_removing_substrings {
+
+    fn min_length(s: String) -> i32 {
+        let (mut stack, set) = (Vec::new(), vec!["AB", "CD"]);
+        for c in s.chars() {
+            if !stack.is_empty()
+                && set.contains(&format!("{}{}", *stack.last().unwrap(), c).as_str())
+            {
+                _ = stack.pop();
+            } else {
+                stack.push(c)
+            }
+        }
+        stack.len() as i32
+    }
+
+    #[test]
+    fn test_lc_2696_one() {
+        assert_eq!(min_length("ABFCACDB".to_string()), 2);
+    }
+
+    #[test]
+    fn test_lc_2696_two() {
+        assert_eq!(min_length("ACBBD".to_string()), 5);
+    }
+}
+
+#[cfg(test)]
+mod lc_1700_number_of_students_unable_to_eat_lunch {
+
+    fn count_students(student: Vec<i32>, sandwiches: Vec<i32>) -> i32 {
+        let (mut zero_count, mut one_count) = (0, 0);
+        for s in student.into_iter() {
+            match s {
+                0 => zero_count += 1,
+                _ => one_count += 1,
+            }
+        }
+        for s in sandwiches.into_iter() {
+            match s {
+                0 if zero_count == 0 => return one_count,
+                1 if one_count == 0 => return zero_count,
+                0 => zero_count -= 1,
+                _ => one_count -= 1,
+            }
+        }
+        0
+    }
+
+    #[test]
+    fn test_lc_1700_one() {
+        assert_eq!(count_students(vec![1, 1, 0, 0], vec![0, 1, 0, 1]), 0);
+    }
+
+    #[test]
+    fn test_lc_1700_two() {
+        assert_eq!(
+            count_students(vec![1, 1, 1, 0, 0, 1], vec![1, 0, 0, 0, 1, 1]),
+            3
+        );
+    }
+}
