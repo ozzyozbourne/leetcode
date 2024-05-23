@@ -126,3 +126,87 @@ mod lc_114_flatten_binary_tree_to_linked_list {
         assert_eq!(tree_node, vec_to_tree(vec![Some(0)]));
     }
 }
+
+#[cfg(test)]
+mod lc_144_binary_tree_preorder_traversal {
+
+    use crate::{vec_to_tree, Rc, RefCell, TreeNode};
+
+    type Node = Rc<RefCell<TreeNode>>;
+
+    fn preorder_traversal(root: Option<Node>) -> Vec<i32> {
+        fn dfs(root: Option<Node>, res: &mut Vec<i32>) {
+            match root {
+                Some(node) => {
+                    res.push(node.borrow().val);
+                    dfs(node.borrow_mut().left.take(), res);
+                    dfs(node.borrow_mut().right.take(), res);
+                }
+                None => {}
+            }
+        }
+        let mut res = vec![];
+        dfs(root, &mut res);
+        res
+    }
+
+    #[test]
+    fn test_lc_144_one() {
+        assert_eq!(
+            preorder_traversal(vec_to_tree(vec![Some(1), Some(2), Some(3)])),
+            vec![1, 2, 3]
+        );
+    }
+
+    #[test]
+    fn test_lc_144_two() {
+        assert_eq!(preorder_traversal(vec_to_tree(vec![])), vec![]);
+    }
+
+    #[test]
+    fn test_lc_144_three() {
+        assert_eq!(preorder_traversal(vec_to_tree(vec![Some(1)])), vec![1]);
+    }
+}
+
+#[cfg(test)]
+mod lc_145_binary_tree_postorder_traversal {
+
+    use crate::{vec_to_tree, Rc, RefCell, TreeNode};
+
+    type Node = Rc<RefCell<TreeNode>>;
+
+    fn postorder_traversal(root: Option<Node>) -> Vec<i32> {
+        fn dfs(root: Option<Node>, res: &mut Vec<i32>) {
+            match root {
+                Some(node) => {
+                    dfs(node.borrow_mut().left.take(), res);
+                    dfs(node.borrow_mut().right.take(), res);
+                    res.push(node.borrow_mut().val);
+                }
+                None => {}
+            }
+        }
+        let mut res = Vec::new();
+        dfs(root, &mut res);
+        res
+    }
+
+    #[test]
+    fn test_lc_145_one() {
+        assert_eq!(
+            postorder_traversal(vec_to_tree(vec![Some(1), Some(2), Some(3)])),
+            vec![2, 3, 1]
+        );
+    }
+
+    #[test]
+    fn test_lc_145_two() {
+        assert_eq!(postorder_traversal(vec_to_tree(vec![])), vec![]);
+    }
+
+    #[test]
+    fn test_lc_145_three() {
+        assert_eq!(postorder_traversal(vec_to_tree(vec![Some(1)])), vec![1]);
+    }
+}
