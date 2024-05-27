@@ -1,4 +1,5 @@
 use std::{cell::RefCell, collections::VecDeque, rc::Rc};
+pub type Node = Rc<RefCell<TreeNode>>;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct TreeNode {
@@ -59,9 +60,7 @@ pub fn vec_to_tree(v: Vec<Option<i32>>) -> Option<Rc<RefCell<TreeNode>>> {
 #[cfg(test)]
 mod lc_114_flatten_binary_tree_to_linked_list {
 
-    use crate::{vec_to_tree, Rc, RefCell, TreeNode};
-
-    type Node = Rc<RefCell<TreeNode>>;
+    use crate::{vec_to_tree, Node, Rc};
 
     fn flatten(root: &mut Option<Node>) {
         fn dfs(node: &mut Option<Node>) -> Option<Node> {
@@ -130,9 +129,7 @@ mod lc_114_flatten_binary_tree_to_linked_list {
 #[cfg(test)]
 mod lc_144_binary_tree_preorder_traversal {
 
-    use crate::{vec_to_tree, Rc, RefCell, TreeNode};
-
-    type Node = Rc<RefCell<TreeNode>>;
+    use crate::{vec_to_tree, Node};
 
     fn preorder_traversal(root: Option<Node>) -> Vec<i32> {
         fn dfs(root: Option<Node>, res: &mut Vec<i32>) {
@@ -172,9 +169,7 @@ mod lc_144_binary_tree_preorder_traversal {
 #[cfg(test)]
 mod lc_145_binary_tree_postorder_traversal {
 
-    use crate::{vec_to_tree, Rc, RefCell, TreeNode};
-
-    type Node = Rc<RefCell<TreeNode>>;
+    use crate::{vec_to_tree, Node};
 
     fn postorder_traversal(root: Option<Node>) -> Vec<i32> {
         fn dfs(root: Option<Node>, res: &mut Vec<i32>) {
@@ -208,5 +203,61 @@ mod lc_145_binary_tree_postorder_traversal {
     #[test]
     fn test_lc_145_three() {
         assert_eq!(postorder_traversal(vec_to_tree(vec![Some(1)])), vec![1]);
+    }
+}
+
+#[cfg(test)]
+mod lc_897_increasing_order_search_tree {
+
+    use crate::{vec_to_tree, Node};
+
+    fn increasing_bst(root: Option<Node>) -> Option<Node> {}
+
+    #[test]
+    fn test_lc_897_one() {
+        assert_eq!(
+            increasing_bst(vec_to_tree(vec![
+                Some(5),
+                Some(3),
+                Some(6),
+                Some(2),
+                Some(4),
+                None,
+                Some(8),
+                Some(1),
+                None,
+                None,
+                None,
+                Some(7),
+                Some(9)
+            ])),
+            vec_to_tree(vec![
+                Some(1),
+                None,
+                Some(2),
+                None,
+                Some(3),
+                None,
+                Some(4),
+                None,
+                Some(5),
+                None,
+                Some(6),
+                None,
+                Some(7),
+                None,
+                Some(8),
+                None,
+                Some(9)
+            ])
+        );
+    }
+
+    #[test]
+    fn test_lc_897_two() {
+        assert_eq!(
+            increasing_bst(vec_to_tree(vec![Some(5), Some(1), Some(7)])),
+            vec_to_tree(vec![Some(1), None, Some(5), None, Some(7), None])
+        );
     }
 }

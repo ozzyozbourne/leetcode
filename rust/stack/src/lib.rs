@@ -400,3 +400,38 @@ mod lc_1700_number_of_students_unable_to_eat_lunch {
         );
     }
 }
+
+#[cfg(test)]
+mod lc_1544_make_the_string_great {
+
+    fn make_good(s: String) -> String {
+        let mut stack = Vec::<char>::new();
+        for c in s.chars() {
+            if !stack.is_empty()
+                && !stack.last().unwrap().eq(&c)
+                && stack.last().unwrap().to_lowercase().next().unwrap()
+                    == c.to_lowercase().next().unwrap()
+            {
+                _ = stack.pop()
+            } else {
+                stack.push(c);
+            }
+        }
+        stack.iter().collect()
+    }
+
+    #[test]
+    fn test_lc_1544_one() {
+        assert_eq!(make_good("leEeetcode".to_string()), "leetcode".to_string());
+    }
+
+    #[test]
+    fn test_lc_1544_two() {
+        assert_eq!(make_good("abBAcC".to_string()), "".to_string());
+    }
+
+    #[test]
+    fn test_lc_1544_three() {
+        assert_eq!(make_good("s".to_string()), "s".to_string());
+    }
+}

@@ -95,5 +95,13 @@ defmodule Misc do
     end
   end
 
+  defmodule LC_224_BasicCalculator do
+    @spec calculate(s :: String.t) :: integer
+    def calculate(s) do
+     
+    end  
+  end
+
+
 
 end
