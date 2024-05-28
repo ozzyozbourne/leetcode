@@ -481,3 +481,45 @@ mod lc_1021_remove_utermost_parentheses {
         assert_eq!(remove_outer_parentheses("()()".to_string()), "".to_string());
     }
 }
+
+#[cfg(test)]
+mod lc_1475_final_prices_with_a_special_discount_in_a_shop {
+
+    fn final_prices(mut prices: Vec<i32>) -> Vec<i32> {
+        let mut stack = Vec::new();
+        for i in 0..prices.len() {
+            while !stack.is_empty() && prices[*stack.last().unwrap()] >= prices[i] {
+                prices[stack.pop().unwrap()] -= prices[i];
+            }
+            stack.push(i);
+        }
+        prices
+    }
+
+    #[test]
+    fn test_lc_1475() {
+        struct TestValues {
+            input: Vec<i32>,
+            expected: Vec<i32>,
+        }
+
+        let test_cases = [
+            TestValues {
+                input: vec![8, 4, 6, 2, 3],
+                expected: vec![4, 2, 4, 2, 3],
+            },
+            TestValues {
+                input: vec![1, 2, 3, 4, 5],
+                expected: vec![1, 2, 3, 4, 5],
+            },
+            TestValues {
+                input: vec![10, 1, 1, 6],
+                expected: vec![9, 0, 1, 6],
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(final_prices(t.input), t.expected);
+        }
+    }
+}
