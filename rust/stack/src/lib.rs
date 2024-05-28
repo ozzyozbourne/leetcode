@@ -435,3 +435,49 @@ mod lc_1544_make_the_string_great {
         assert_eq!(make_good("s".to_string()), "s".to_string());
     }
 }
+
+#[cfg(test)]
+mod lc_1021_remove_utermost_parentheses {
+
+    fn remove_outer_parentheses(s: String) -> String {
+        let (mut answer, mut level) = (String::new(), 0);
+        for c in s.chars() {
+            match c {
+                '(' => {
+                    if level > 0 {
+                        answer.push(c);
+                    }
+                    level += 1;
+                }
+                _ => {
+                    level -= 1;
+                    if level > 0 {
+                        answer.push(c);
+                    }
+                }
+            }
+        }
+        answer
+    }
+
+    #[test]
+    fn test_lc_1021_one() {
+        assert_eq!(
+            remove_outer_parentheses("(()())(())".to_string()),
+            "()()()".to_string()
+        );
+    }
+
+    #[test]
+    fn test_lc_1021_two() {
+        assert_eq!(
+            remove_outer_parentheses("(()())(())(()(()))".to_string()),
+            "()()()()(())".to_string()
+        );
+    }
+
+    #[test]
+    fn test_lc_1021_three() {
+        assert_eq!(remove_outer_parentheses("()()".to_string()), "".to_string());
+    }
+}
