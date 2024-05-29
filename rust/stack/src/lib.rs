@@ -523,3 +523,66 @@ mod lc_1475_final_prices_with_a_special_discount_in_a_shop {
         }
     }
 }
+
+#[cfg(test)]
+mod lc_227_basic_calculator_ii {
+
+    fn calculate(s: String) -> i32 {
+        let (mut num, mut presign, mut stack) = (0, '+', Vec::new());
+        for c in s.chars().chain(std::iter::once('+')) {
+            match c {
+                '0'..='9' => {
+                    num = num * 10 + c.to_digit(10).unwrap() as i32;
+                }
+                '+' | '-' | '*' | '/' => {
+                    match presign {
+                        '+' => stack.push(num),
+                        '-' => stack.push(-num),
+                        '*' => {
+                            if let Some(last) = stack.pop() {
+                                stack.push(last * num);
+                            }
+                        }
+                        '/' => {
+                            if let Some(last) = stack.pop() {
+                                stack.push(last / num);
+                            }
+                        }
+                        _ => {}
+                    }
+                    presign = c;
+                    num = 0;
+                }
+                _ => {}
+            }
+        }
+        stack.into_iter().sum()
+    }
+
+    #[test]
+    fn test_lc_227() {
+        struct TestValues {
+            input: String,
+            expected: i32,
+        }
+
+        let test_cases = [
+            TestValues {
+                input: "3 + 2 * 2".to_string(),
+                expected: 7,
+            },
+            TestValues {
+                input: " 3/2 ".to_string(),
+                expected: 1,
+            },
+            TestValues {
+                input: " 3+5 / 2 ".to_string(),
+                expected: 5,
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(calculate(t.input), t.expected);
+        }
+    }
+}
