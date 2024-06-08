@@ -292,6 +292,10 @@ mod lc_84_largest_rectangle_in_histogram {
 
     #[test]
     fn test_lc_84_one() {
+        #[derive(Debug)]
+        struct TestValue {
+            field: Type,
+        }
         assert_eq!(largest_rectangle_area(vec![2, 1, 5, 6, 2, 3]), 10);
     }
 
@@ -322,18 +326,30 @@ mod lc_32_longest_valid_parentheses {
     }
 
     #[test]
-    fn test_lc_32_one() {
-        assert_eq!(longest_valid_parentheses("(()".to_string()), 2);
-    }
+    fn test_lc_32() {
+        struct TestValues {
+            input: String,
+            expected: i32,
+        }
 
-    #[test]
-    fn test_lc_32_two() {
-        assert_eq!(longest_valid_parentheses(")()())".to_string()), 4);
-    }
+        let test_cases = [
+            TestValues {
+                input: "(()".to_string(),
+                expected: 2,
+            },
+            TestValues {
+                input: ")()())".to_string(),
+                expected: 4,
+            },
+            TestValues {
+                input: "".to_string(),
+                expected: 0,
+            },
+        ];
 
-    #[test]
-    fn test_lc_32_three() {
-        assert_eq!(longest_valid_parentheses("".to_string()), 0);
+        for t in test_cases.into_iter() {
+            assert_eq!(longest_valid_parentheses(t.input), t.expected);
+        }
     }
 }
 
@@ -355,13 +371,26 @@ mod lc_2696_minimum_string_length_after_removing_substrings {
     }
 
     #[test]
-    fn test_lc_2696_one() {
-        assert_eq!(min_length("ABFCACDB".to_string()), 2);
-    }
+    fn test_lc_2696() {
+        struct TestValue {
+            input: String,
+            expected: i32,
+        }
 
-    #[test]
-    fn test_lc_2696_two() {
-        assert_eq!(min_length("ACBBD".to_string()), 5);
+        let test_cases = [
+            TestValue {
+                input: "ABFCACDB".to_string(),
+                expected: 2,
+            },
+            TestValue {
+                input: "ACBBD".to_string(),
+                expected: 5,
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(min_length(t.input), t.expected);
+        }
     }
 }
 
@@ -388,16 +417,28 @@ mod lc_1700_number_of_students_unable_to_eat_lunch {
     }
 
     #[test]
-    fn test_lc_1700_one() {
-        assert_eq!(count_students(vec![1, 1, 0, 0], vec![0, 1, 0, 1]), 0);
-    }
+    fn test_lc_1700() {
+        struct TestValue {
+            student: Vec<i32>,
+            sandwiches: Vec<i32>,
+            expected: i32,
+        }
 
-    #[test]
-    fn test_lc_1700_two() {
-        assert_eq!(
-            count_students(vec![1, 1, 1, 0, 0, 1], vec![1, 0, 0, 0, 1, 1]),
-            3
-        );
+        let test_cases = [
+            TestValue {
+                student: vec![1, 1, 0, 0],
+                sandwiches: vec![0, 1, 0, 1],
+                expected: 0,
+            },
+            TestValue {
+                student: vec![1, 1, 1, 0, 0, 1],
+                sandwiches: vec![1, 0, 0, 0, 1, 1],
+                expected: 3,
+            },
+        ];
+        for t in test_cases.into_iter() {
+            assert_eq!(count_students(t.student, t.sandwiches), t.expected);
+        }
     }
 }
 
@@ -421,18 +462,29 @@ mod lc_1544_make_the_string_great {
     }
 
     #[test]
-    fn test_lc_1544_one() {
-        assert_eq!(make_good("leEeetcode".to_string()), "leetcode".to_string());
-    }
+    fn test_lc_1544() {
+        struct TestValue {
+            input: String,
+            expected: String,
+        }
 
-    #[test]
-    fn test_lc_1544_two() {
-        assert_eq!(make_good("abBAcC".to_string()), "".to_string());
-    }
-
-    #[test]
-    fn test_lc_1544_three() {
-        assert_eq!(make_good("s".to_string()), "s".to_string());
+        let test_cases = [
+            TestValue {
+                input: "leEeetcode".to_string(),
+                expected: "leetcode".to_string(),
+            },
+            TestValue {
+                input: "abBAcC".to_string(),
+                expected: "".to_string(),
+            },
+            TestValue {
+                input: "s".to_string(),
+                expected: "s".to_string(),
+            },
+        ];
+        for t in test_cases.into_iter() {
+            assert_eq!(make_good(t.input), t.expected);
+        }
     }
 }
 
@@ -461,24 +513,30 @@ mod lc_1021_remove_utermost_parentheses {
     }
 
     #[test]
-    fn test_lc_1021_one() {
-        assert_eq!(
-            remove_outer_parentheses("(()())(())".to_string()),
-            "()()()".to_string()
-        );
-    }
+    fn test_lc_1021() {
+        struct TestValue {
+            input: String,
+            expected: String,
+        }
 
-    #[test]
-    fn test_lc_1021_two() {
-        assert_eq!(
-            remove_outer_parentheses("(()())(())(()(()))".to_string()),
-            "()()()()(())".to_string()
-        );
-    }
+        let test_cases = [
+            TestValue {
+                input: "(()())(())".to_string(),
+                expected: "()()()".to_string(),
+            },
+            TestValue {
+                input: "(()())(())(()(()))".to_string(),
+                expected: "()()()()(())".to_string(),
+            },
+            TestValue {
+                input: "()()".to_string(),
+                expected: "".to_string(),
+            },
+        ];
 
-    #[test]
-    fn test_lc_1021_three() {
-        assert_eq!(remove_outer_parentheses("()()".to_string()), "".to_string());
+        for t in test_cases.into_iter() {
+            assert_eq!(remove_outer_parentheses(t.input), t.expected);
+        }
     }
 }
 
@@ -498,21 +556,21 @@ mod lc_1475_final_prices_with_a_special_discount_in_a_shop {
 
     #[test]
     fn test_lc_1475() {
-        struct TestValues {
+        struct TestValue {
             input: Vec<i32>,
             expected: Vec<i32>,
         }
 
         let test_cases = [
-            TestValues {
+            TestValue {
                 input: vec![8, 4, 6, 2, 3],
                 expected: vec![4, 2, 4, 2, 3],
             },
-            TestValues {
+            TestValue {
                 input: vec![1, 2, 3, 4, 5],
                 expected: vec![1, 2, 3, 4, 5],
             },
-            TestValues {
+            TestValue {
                 input: vec![10, 1, 1, 6],
                 expected: vec![9, 0, 1, 6],
             },
@@ -531,9 +589,7 @@ mod lc_227_basic_calculator_ii {
         let (mut num, mut presign, mut stack) = (0, '+', Vec::new());
         for c in s.chars().chain(std::iter::once('+')) {
             match c {
-                '0'..='9' => {
-                    num = num * 10 + c.to_digit(10).unwrap() as i32;
-                }
+                '0'..='9' => num = num * 10 + c.to_digit(10).unwrap() as i32,
                 '+' | '-' | '*' | '/' => {
                     match presign {
                         '+' => stack.push(num),
@@ -550,8 +606,7 @@ mod lc_227_basic_calculator_ii {
                         }
                         _ => {}
                     }
-                    presign = c;
-                    num = 0;
+                    (presign, num) = (c, 0);
                 }
                 _ => {}
             }
@@ -561,21 +616,21 @@ mod lc_227_basic_calculator_ii {
 
     #[test]
     fn test_lc_227() {
-        struct TestValues {
+        struct TestValue {
             input: String,
             expected: i32,
         }
 
         let test_cases = [
-            TestValues {
+            TestValue {
                 input: "3 + 2 * 2".to_string(),
                 expected: 7,
             },
-            TestValues {
+            TestValue {
                 input: " 3/2 ".to_string(),
                 expected: 1,
             },
-            TestValues {
+            TestValue {
                 input: " 3+5 / 2 ".to_string(),
                 expected: 5,
             },
