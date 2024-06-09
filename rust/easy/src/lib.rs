@@ -193,3 +193,196 @@ mod lc_136 {
         assert_eq!(single_number(vec![1]), 1);
     }
 }
+
+#[cfg(test)]
+mod lc_338 {
+
+    fn count_bits(n: i32) -> Vec<i32> {
+        let mut dp = vec![0; (n + 1) as usize];
+        let mut offset = 1;
+        for i in 1..n + 1 {
+            if offset * 2 == i {
+                offset = i;
+            }
+            dp[i as usize] = 1 + dp[(i - offset) as usize]
+        }
+        dp
+    }
+
+    #[test]
+    fn test_lc_338() {
+        struct TestValues {
+            input: i32,
+            expected: Vec<i32>,
+        }
+
+        let test_cases = [
+            TestValues {
+                input: 2,
+                expected: vec![0, 1, 1],
+            },
+            TestValues {
+                input: 5,
+                expected: vec![0, 1, 1, 2, 1, 2],
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(count_bits(t.input), t.expected);
+        }
+    }
+}
+
+#[cfg(test)]
+mod lc_118 {
+
+    fn generate(n: i32) -> Vec<Vec<i32>> {
+        let mut res = vec![vec![1]];
+        for _ in 0..n - 1 {
+            let (mut temp, mut row) = (Vec::new(), Vec::new());
+            temp.push(0);
+            temp.extend(res.last().unwrap().iter());
+            temp.push(0);
+            for j in 0..=res.last().unwrap().len() {
+                row.push(temp[j] + temp[j + 1]);
+            }
+            res.push(row);
+        }
+        res
+    }
+
+    #[test]
+    fn test_lc_118() {
+        struct TestValues {
+            input: i32,
+            expected: Vec<Vec<i32>>,
+        }
+
+        let test_cases = [
+            TestValues {
+                input: 5,
+                expected: vec![
+                    vec![1],
+                    vec![1, 1],
+                    vec![1, 2, 1],
+                    vec![1, 3, 3, 1],
+                    vec![1, 4, 6, 4, 1],
+                ],
+            },
+            TestValues {
+                input: 1,
+                expected: vec![vec![1]],
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(generate(t.input), t.expected);
+        }
+    }
+}
+
+#[cfg(test)]
+mod lc_509 {
+    fn fib(n: i32, a: i32, b: i32) -> i32 {
+        match n {
+            1 => b,
+            0 => n,
+            _ => fib(n - 1, b, a + b),
+        }
+    }
+
+    #[test]
+    fn lc_509_tests() {
+        struct TestValue {
+            input1: i32,
+            input2: i32,
+            input3: i32,
+            expected: i32,
+        }
+
+        let test_cases = [
+            TestValue {
+                input1: 2,
+                input2: 0,
+                input3: 1,
+                expected: 1,
+            },
+            TestValue {
+                input1: 4,
+                input2: 0,
+                input3: 1,
+                expected: 3,
+            },
+            TestValue {
+                input1: 3,
+                input2: 0,
+                input3: 1,
+                expected: 2,
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(fib(t.input1, t.input2, t.input3), t.expected);
+        }
+    }
+}
+
+#[cfg(test)]
+mod lc_1137 {
+    fn tribonacci(n: i32) -> i32 {
+        (0..n).fold((0, 1, 1), |(a, b, c), _| (b, c, a + b + c)).0
+    }
+
+    #[test]
+    fn lc_1137_tests() {
+        struct TestValue {
+            input: i32,
+            expected: i32,
+        }
+
+        let test_cases = [
+            TestValue {
+                input: 4,
+                expected: 4,
+            },
+            TestValue {
+                input: 25,
+                expected: 1389537,
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(tribonacci(t.input), t.expected);
+        }
+    }
+}
+
+#[cfg(test)]
+mod lc_70 {
+    fn climb_stairs(n: i32) -> i32 {
+        (1..n).fold((1, 1), |(a, b), _| (b, a + b)).1
+    }
+
+    #[test]
+    fn lc_70_tests() {
+        struct TestValue {
+            input: i32,
+            expected: i32,
+        }
+
+        let test_cases = [
+            TestValue {
+                input: 2,
+                expected: 2,
+            },
+            TestValue {
+                input: 3,
+                expected: 3,
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(climb_stairs(t.input), t.expected);
+        }
+    }
+}
