@@ -386,3 +386,76 @@ mod lc_70 {
         }
     }
 }
+
+#[cfg(test)]
+mod lc_746 {
+    fn min_cost_climbing_stairs(mut cost: Vec<i32>) -> i32 {
+        cost.push(0);
+        for i in (0..cost.len() - 3).rev() {
+            cost[i] += std::cmp::min(cost[i + 1], cost[i + 2]);
+        }
+        std::cmp::min(cost[0], cost[1])
+    }
+
+    #[test]
+    fn lc_746_tests() {
+        struct TestValue {
+            input: Vec<i32>,
+            expected: i32,
+        }
+
+        let test_cases = [
+            TestValue {
+                input: vec![10, 15, 20],
+                expected: 15,
+            },
+            TestValue {
+                input: vec![1, 100, 1, 1, 1, 100, 1, 1, 100, 1],
+                expected: 6,
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(min_cost_climbing_stairs(t.input), t.expected);
+        }
+    }
+}
+
+#[cfg(test)]
+mod lc_121 {
+    fn max_profit(prices: Vec<i32>) -> i32 {
+        let (mut l, mut r, mut max) = (0, 1, 0);
+        while r < prices.len() {
+            if prices[l] < prices[r] {
+                max = std::cmp::max(max, prices[r] - prices[l])
+            } else {
+                l = r;
+            }
+            r += 1;
+        }
+        max
+    }
+
+    #[test]
+    fn lc_121_tests() {
+        struct TestValue {
+            input: Vec<i32>,
+            expected: i32,
+        }
+
+        let test_cases = [
+            TestValue {
+                input: vec![7, 1, 5, 3, 6, 4],
+                expected: 5,
+            },
+            TestValue {
+                input: vec![7, 6, 4, 3, 1],
+                expected: 0,
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(max_profit(t.input), t.expected);
+        }
+    }
+}
