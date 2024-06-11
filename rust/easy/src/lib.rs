@@ -459,3 +459,118 @@ mod lc_121 {
         }
     }
 }
+
+#[cfg(test)]
+mod lc_392 {
+    fn is_subsequence(s: String, t: String) -> bool {
+        let (mut l, mut r, s1, t1): (usize, usize, Vec<char>, Vec<char>) =
+            (0, 0, s.chars().collect(), t.chars().collect());
+        while l < s1.len() && r < t1.len() {
+            if s1[l] == t1[r] {
+                l += 1;
+            }
+            r += 1;
+        }
+        l == s1.len()
+    }
+
+    #[test]
+    fn lc_392_tests() {
+        struct TestValue {
+            input1: String,
+            input2: String,
+            expected: bool,
+        }
+
+        let test_cases = [
+            TestValue {
+                input1: String::from("abc"),
+                input2: String::from("ahbgdc"),
+                expected: true,
+            },
+            TestValue {
+                input1: String::from("axc"),
+                input2: String::from("ahbgdc"),
+                expected: false,
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(is_subsequence(t.input1, t.input2), t.expected);
+        }
+    }
+}
+
+#[cfg(test)]
+mod lc_1688 {
+    fn max_repeating(sequence: String, word: String) -> i32 {
+        let max_word = word.repeat(sequence.len() / word.len());
+        let mut n = max_word.len();
+        while sequence.find(&max_word[..n]).is_none() {
+            n -= word.len();
+        }
+        (n / word.len()) as _
+    }
+
+    #[test]
+    fn lc_392_tests() {
+        struct TestValue {
+            input1: String,
+            input2: String,
+            expected: i32,
+        }
+
+        let test_cases = [
+            TestValue {
+                input1: String::from("ababc"),
+                input2: String::from("ab"),
+                expected: 2,
+            },
+            TestValue {
+                input1: String::from("ababc"),
+                input2: String::from("ba"),
+                expected: 1,
+            },
+            TestValue {
+                input1: String::from("ababc"),
+                input2: String::from("ac"),
+                expected: 0,
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(max_repeating(t.input1, t.input2), t.expected);
+        }
+    }
+}
+
+#[cfg(test)]
+mod lc_2900 {
+    fn get_longest_subsequence(word: Vec<String>, groups: Vec<i32>) -> Vec<String> {}
+
+    #[test]
+    fn lc_2900_tests() {
+        struct TestValue {
+            input1: Vec<String>,
+            input2: Vec<i32>,
+            expected: Vec<String>,
+        }
+
+        let test_cases = [
+            TestValue {
+                input1: vec![String::from("c")],
+                input2: vec![0],
+                expected: vec![String::from("c")],
+            },
+            TestValue {
+                input1: vec![String::from("d")],
+                input2: vec![0],
+                expected: vec![String::from("d")],
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(get_longest_subsequence(t.input1, t.input2), t.expected);
+        }
+    }
+}
