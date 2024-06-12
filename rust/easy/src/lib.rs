@@ -198,9 +198,8 @@ mod lc_136 {
 mod lc_338 {
 
     fn count_bits(n: i32) -> Vec<i32> {
-        let mut dp = vec![0; (n + 1) as usize];
-        let mut offset = 1;
-        for i in 1..n + 1 {
+        let (mut dp, mut offset) = (vec![0; (n + 1) as usize], 1);
+        for i in 1..=n {
             if offset * 2 == i {
                 offset = i;
             }
@@ -546,7 +545,16 @@ mod lc_1688 {
 
 #[cfg(test)]
 mod lc_2900 {
-    fn get_longest_subsequence(word: Vec<String>, groups: Vec<i32>) -> Vec<String> {}
+    fn get_longest_subsequence(words: Vec<String>, groups: Vec<i32>) -> Vec<String> {
+        let (mut res, mut prev) = (Vec::new(), -1);
+        for (c, g) in words.into_iter().zip(groups.into_iter()) {
+            if g != prev {
+                prev = g;
+                res.push(c);
+            }
+        }
+        res
+    }
 
     #[test]
     fn lc_2900_tests() {
@@ -571,6 +579,90 @@ mod lc_2900 {
 
         for t in test_cases.into_iter() {
             assert_eq!(get_longest_subsequence(t.input1, t.input2), t.expected);
+        }
+    }
+}
+
+#[cfg(test)]
+mod lc_119 {
+    fn get_row(row_index: i32) -> Vec<i32> {
+        let mut res = vec![1];
+        for _ in 0..row_index {
+            let mut next_row = vec![0; res.len() + 1];
+            for (j, v) in res.into_iter().enumerate() {
+                next_row[j] += v;
+                next_row[j + 1] += v;
+            }
+            res = next_row;
+        }
+        res
+    }
+
+    #[test]
+    fn lc_119_tests() {
+        struct TestValue {
+            input: i32,
+            expected: Vec<i32>,
+        }
+
+        let test_cases = [
+            TestValue {
+                input: 3,
+                expected: vec![1, 3, 3, 1],
+            },
+            TestValue {
+                input: 0,
+                expected: vec![1],
+            },
+            TestValue {
+                input: 1,
+                expected: vec![1, 1],
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(get_row(t.input), t.expected);
+        }
+    }
+}
+
+#[cfg(test)]
+mod lc_3024 {
+    fn triangle_type(nums: Vec<i32>) -> String {
+        if nums[0] + nums[1] > nums[2] && nums[0] + nums[2] > nums[1] && nums[1] + nums[2] > nums[0]
+        {
+            if nums[0] == nums[1] && nums[1] == nums[2] {
+                "equilateral".to_string()
+            } else if nums[0] == nums[1] || nums[0] == nums[2] || nums[1] == nums[2] {
+                "isosceles".to_string()
+            } else {
+                "scalene".to_string()
+            }
+        } else {
+            "none".to_string()
+        }
+    }
+
+    #[test]
+    fn lc_3024_tests() {
+        struct TestValue {
+            input: Vec<i32>,
+            expected: String,
+        }
+
+        let test_cases = [
+            TestValue {
+                input: vec![3, 3, 3],
+                expected: "equilateral".to_string(),
+            },
+            TestValue {
+                input: vec![3, 4, 5],
+                expected: "scalene".to_string(),
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(triangle_type(t.input), t.expected);
         }
     }
 }

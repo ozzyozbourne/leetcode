@@ -81,4 +81,15 @@ public final class Easy {
             res.add(row);
         }return res;
     }
+
+    public static List<Integer> getRow(final int rowIndex) {
+        int[] res = new int[]{1};
+        for(int i = 0; i < rowIndex; i++){
+            final int[] nextRow = new int[res.length + 1];
+            for(int j = 0; j < res.length; j++){
+                nextRow[j] += res[j];
+                nextRow[j + 1] += res[j];
+            }res = nextRow;
+        }return Arrays.stream(res).boxed().collect(Collectors.toList());
+    }
 }
