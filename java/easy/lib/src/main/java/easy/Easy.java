@@ -130,6 +130,16 @@ public final class Easy {
                 }
             }
         }
+
+    }
+
+    private static boolean inner(final Integer n, final Integer r){
+        if (r != 0) return false;
+        else return switch (n.compareTo(1)){
+                case -1 -> false;
+                case 0 -> true;
+                default -> inner(n / 3, n % 3);
+            };
     }
 
 }

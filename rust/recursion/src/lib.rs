@@ -180,3 +180,63 @@ mod lc_21 {
         }
     }
 }
+
+#[cfg(test)]
+mod lc_326 {
+    use std::cmp::Ordering;
+
+    fn is_power_of_three(n: i32) -> bool {
+        fn inner(n: i32, r: i32) -> bool {
+            if r != 0 {
+                false
+            } else {
+                match n.cmp(&1) {
+                    Ordering::Less => false,
+                    Ordering::Equal => true,
+                    Ordering::Greater => inner(n / 3, n % 3),
+                }
+            }
+        }
+        inner(n, 0)
+    }
+
+    fn is_power_of_three_pure_functional(n: i32) -> bool {
+        fn inner(n: i32, r: i32) -> bool {
+            match (n, r) {
+                (_, r) if r != 0 => false,
+                (n, _) if n < 1 => false,
+                (1, 0) => true,
+                (n, _) => inner(n / 3, n % 3),
+            }
+        }
+        inner(n, 0)
+    }
+
+    #[test]
+    fn lc_21_tests() {
+        struct TestValue {
+            input: i32,
+            expected: bool,
+        }
+
+        let test_cases = [
+            TestValue {
+                input: 27,
+                expected: true,
+            },
+            TestValue {
+                input: 0,
+                expected: false,
+            },
+            TestValue {
+                input: -1,
+                expected: false,
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(is_power_of_three(t.input), t.expected);
+            assert_eq!(is_power_of_three_pure_functional(t.input), t.expected);
+        }
+    }
+}
