@@ -59,7 +59,7 @@ mod no_lc {
     }
 
     #[test]
-    fn lc_509_tests() {
+    fn no_lc_tests() {
         struct TestValue {
             input: Vec<i32>,
             expected: Vec<Vec<i32>>,
@@ -95,6 +95,50 @@ mod no_lc {
             for v in res.into_iter() {
                 assert!(t.expected.contains(&v));
             }
+        }
+    }
+}
+
+#[cfg(test)]
+mod lc_9 {
+    fn is_palindrome(x: i32) -> bool {
+        fn reverse(x: i32, r: i32) -> i32 {
+            match (x, r) {
+                (_, _) if x < 10 => r * 10 + x,
+                _ => reverse(x / 10, r * 10 + x % 10),
+            }
+        }
+        match x {
+            _ if x < 0 => false,
+            _ if x < 10 => true,
+            _ => reverse(x, 0) == x,
+        }
+    }
+
+    #[test]
+    fn lc_9_tests() {
+        struct TestValue {
+            input: i32,
+            expected: bool,
+        }
+
+        let test_cases = [
+            TestValue {
+                input: 121,
+                expected: true,
+            },
+            TestValue {
+                input: -121,
+                expected: false,
+            },
+            TestValue {
+                input: 10,
+                expected: false,
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(is_palindrome(t.input), t.expected);
         }
     }
 }

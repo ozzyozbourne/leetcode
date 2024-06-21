@@ -175,5 +175,21 @@ public final class Easy {
         res.sort(Comparator.comparingInt(a -> a[1]));
         return res.stream().mapToInt(a -> a[0]).toArray();
     }
+
+    public double champagneTower(final int poured, final int query_row, final int query_glass) {
+        List<Double> res = new ArrayList<>(List.of(0.0));
+        for(int i = 1; i <= query_row; i++){
+            final Double[] curr_row = new Double[res.size() + 1];
+            for(int j = 0; j < res.size(); j++){
+                final double extra = res.get(i);
+                if (extra > 0) {
+                    curr_row[i] += 0.5 * extra;
+                    curr_row[i + 1] += 0.5 * extra;
+                }
+            }
+            res = Arrays.asList(curr_row);
+        }
+        return Math.min(1, res.get(query_glass));
+    }
     
 }
