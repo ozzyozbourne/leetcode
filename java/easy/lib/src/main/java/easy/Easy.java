@@ -1,8 +1,6 @@
 package easy;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -142,4 +140,40 @@ public final class Easy {
             };
     }
 
+    private final List<List<Integer>> res = new ArrayList<>();
+    private final List<Integer> sub = new ArrayList<>();
+
+    public List<List<Integer>> subsets(int[] nums) {
+        subsetsGetter(nums, 0);
+        return res;
+    }
+
+    void subsetsGetter(int[] nums, int i){
+        if (i >= nums.length) {
+            res.add(new ArrayList<>(sub));
+            return;
+        }
+
+        sub.add(nums[i]);
+        subsetsGetter(nums , i + 1);
+
+        sub.removeLast();
+        subsetsGetter(nums , i + 1);
+
+    }
+
+    public static int[] maxSubsequence(final int[] nums, final int k) {
+        final PriorityQueue<int[]> heap = new PriorityQueue<>(Comparator.comparingInt(a -> a[0]));
+        final List<int[]> res = new ArrayList<>(k);
+
+        for (int i = 0; i < nums.length; i++){
+            heap.add(new int[]{nums[i], i});
+            if (heap.size() >= k)
+                heap.poll();
+        };
+        while(!heap.isEmpty()) res.add(heap.poll());
+        res.sort(Comparator.comparingInt(a -> a[1]));
+        return res.stream().mapToInt(a -> a[0]).toArray();
+    }
+    
 }

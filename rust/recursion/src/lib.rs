@@ -391,9 +391,6 @@ mod lc_234 {
     use crate::{vec_to_listnode, T};
 
     fn is_palindrome(head: T) -> bool {
-        if head.is_none() || head.as_ref().unwrap().next.is_none() {
-            return true;
-        }
         let find_mid = || {
             let (mut mid, mut fast) = (0, &head);
             while fast.is_some() && fast.as_ref().unwrap().next.is_some() {
@@ -403,7 +400,6 @@ mod lc_234 {
             mid
         };
         let count = find_mid();
-
         let split = || {
             let (mut prev, mut cur) = (None, head);
             for _ in 0..count {
@@ -413,11 +409,7 @@ mod lc_234 {
                     prev = Some(node);
                 }
             }
-            if prev == cur {
-                true
-            } else {
-                prev == cur.unwrap().next
-            }
+            prev == cur || prev == cur.unwrap().next
         };
         split()
     }
