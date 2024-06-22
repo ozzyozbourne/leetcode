@@ -3,6 +3,7 @@ package easy;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public final class Easy {
 
@@ -190,6 +191,32 @@ public final class Easy {
             res = Arrays.asList(curr_row);
         }
         return Math.min(1, res.get(query_glass));
+    }
+
+    public int numberOfSubarrays(final int[] nums, final int k) {
+        final List<Integer> window = Stream.generate(() -> 0).limit(k).collect(Collectors.toList());
+        int starting_points = 1, res = 0;
+        for(final int n: nums){
+            if ((n & 1) == 1){
+                window.removeFirst();
+                window.add(starting_points);
+                starting_points = 1;
+            }else starting_points += 1;
+            res += window.getFirst();
+        }return res;
+    }
+
+    public int numberOfSubarray(final int[] nums, final int k) {
+        final Queue<Integer> oddIndices = new LinkedList<>();
+        int subarrays = 0, lastPopped = -1, initialGap = -1;
+        for (int i = 0; i < nums.length; i++) {
+            if (nums[i] % 2 == 1) oddIndices.offer(i);
+            if (oddIndices.size() > k) lastPopped = oddIndices.remove();
+            if (oddIndices.size() == k) {
+                initialGap = oddIndices.element() - lastPopped;
+                subarrays += initialGap;
+            }
+        }return subarrays;
     }
     
 }
