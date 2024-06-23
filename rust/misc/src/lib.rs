@@ -142,3 +142,49 @@ mod lc_9 {
         }
     }
 }
+
+#[cfg(test)]
+mod lc_7 {
+    fn reverse(mut x: i32) -> i32 {
+        let mut rev = 0;
+        while x != 0 {
+            let pop = x % 10;
+            x /= 10;
+            if rev > i32::MAX / 10 || (rev == i32::MAX / 10 && pop > 7) {
+                return 0;
+            }
+            if rev < i32::MIN / 10 || (rev == i32::MIN / 10 && pop < -8) {
+                return 0;
+            }
+            rev = rev * 10 + pop
+        }
+        rev
+    }
+
+    #[test]
+    fn lc_9_tests() {
+        struct TestValue {
+            input: i32,
+            expected: i32,
+        }
+
+        let test_cases = [
+            TestValue {
+                input: 123,
+                expected: 321,
+            },
+            TestValue {
+                input: -123,
+                expected: -321,
+            },
+            TestValue {
+                input: 120,
+                expected: 21,
+            },
+        ];
+
+        for t in test_cases.into_iter() {
+            assert_eq!(reverse(t.input), t.expected);
+        }
+    }
+}

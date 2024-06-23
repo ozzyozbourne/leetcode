@@ -1,6 +1,7 @@
 package easy;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -57,12 +58,7 @@ public final class Easy {
     }
 
     public static void main(String[] args) {
-        int one = 0, two = 0;
-        for(final int  v: new int[] {2, 2, 3, 2}){
-            one = (one ^ v) & ~two;
-            two = (two ^ v) & ~one;
-            System.out.printf("%s\t%s\n", Integer.toBinaryString(one), Integer.toBinaryString(two));
-        }
+        numSubarraysWithSum(new int[]{1,0,1,0,1}, 2);
     }
 
     public static List<List<Integer>> generate(final int numRows) {
@@ -206,17 +202,20 @@ public final class Easy {
         }return res;
     }
 
-    public int numberOfSubarray(final int[] nums, final int k) {
-        final Queue<Integer> oddIndices = new LinkedList<>();
-        int subarrays = 0, lastPopped = -1, initialGap = -1;
-        for (int i = 0; i < nums.length; i++) {
-            if (nums[i] % 2 == 1) oddIndices.offer(i);
-            if (oddIndices.size() > k) lastPopped = oddIndices.remove();
-            if (oddIndices.size() == k) {
-                initialGap = oddIndices.element() - lastPopped;
-                subarrays += initialGap;
-            }
-        }return subarrays;
+    public static int numSubarraysWithSum(final int[] nums, final int goal) {
+        final Function<Integer, Integer> lessThanEqual = gl -> {
+            if (gl < 0) return 0;
+            int sum = 0, res = 0, l = 0;
+            for(int r = 0; r < nums.length; r++) {
+                sum += nums[r];
+                while (sum > gl && l <=r){
+                    sum -= nums[l];
+                    l += 1;
+                }res = r - l + 1;
+            }return res;
+        };
+        return lessThanEqual.apply(goal) - lessThanEqual.apply(goal -1);
     }
+
     
 }
