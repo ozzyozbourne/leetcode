@@ -18,6 +18,71 @@ impl TreeNode {
     }
 }
 
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct ListNode {
+    pub val: i32,
+    pub next: Option<Box<ListNode>>,
+}
+
+impl ListNode {
+    pub fn new(val: i32) -> Self {
+        ListNode { next: None, val }
+    }
+}
+
+pub fn spiral_matrix(b: i32, r: i32, mut head: Option<Box<ListNode>>) -> Vec<Vec<i32>> {
+    let mut get_val = || match head.take() {
+        Some(node) => {
+            head = node.next;
+            node.val
+        }
+        None => -1,
+    };
+    let (mut b, mut r) = (b as usize, r as usize);
+    let (mut l, mut t, mut res) = (0, 0, vec![vec![-1; r]; b]);
+    while l < r && t < b {
+        for i in l..r {
+            res[t][i] = get_val();
+        }
+        t += 1;
+        for i in t..b {
+            res[i][r - 1] = get_val();
+        }
+        r -= 1;
+        if !(l < r && t < b) {
+            break;
+        }
+        for i in (l..r).rev() {
+            res[b - 1][i] = get_val();
+        }
+        b -= 1;
+        for i in (t..b).rev() {
+            res[i][l] = get_val();
+        }
+        l += 1;
+    }
+    res
+}
+
+pub fn range_sum_bst(root: Option<Rc<RefCell<TreeNode>>>, low: i32, high: i32) -> i32 {
+    use std::cell::Ref;
+    match root {
+        None => 0,
+        Some(node) => {
+            let node: Ref<TreeNode> = node.borrow();
+            match node {
+                _ if node.val > high => range_sum_bst(node.left.clone(), low, high),
+                _ if node.val < low => range_sum_bst(node.right.clone(), low, high),
+                _ => {
+                    node.val
+                        + range_sum_bst(node.left.clone(), low, high)
+                        + range_sum_bst(node.right.clone(), low, high)
+                }
+            }
+        }
+    }
+}
+
 pub fn vec_to_tree(v: Vec<Option<i32>>) -> Option<Rc<RefCell<TreeNode>>> {
     match v.is_empty() {
         true => None,

@@ -2,6 +2,7 @@ package easy;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -58,8 +59,7 @@ public final class Easy {
     }
 
     public static void main(String[] args) {
-        numSubarraysWithSum(new int[]{1,0,1,0,1}, 2);
-    }
+isArraySpecial(new int[]{4,3,1,6}, new int[][]{{0,2},{2,3}});    }
 
     public static List<List<Integer>> generate(final int numRows) {
         final List<List<Integer>> res = new ArrayList<>();
@@ -215,6 +215,89 @@ public final class Easy {
             }return res;
         };
         return lessThanEqual.apply(goal) - lessThanEqual.apply(goal -1);
+    }
+
+    public boolean threeConsecutiveOdds(final int[] arr) {
+        int count = 0;
+        for (final int num : arr)
+            if (count == 3) return true;
+            else if ((num & 1) == 1) count++;
+            else count = 0;
+        return count == 3;
+    }
+
+    public int getCommon(final int[] nums1, final int[] nums2) {
+        int l = 0, r = 0;
+        while(l < nums1.length && r < nums2.length){
+            switch (Integer.compare(nums1[l], nums2[r])){
+                case -1 -> l += 1;
+                case 1  -> r += 1;
+                default -> {return nums1[l];}
+
+            }
+        }return -1;
+    }
+
+    public static boolean[] isArraySpecial(final int[] nums, final int[][] queries) {
+        if (nums.length == 1) return new boolean[queries.length];
+
+        var prefixSum = new int[nums.length];
+        var res = new boolean[queries.length];
+
+        for(int i = 1; i < nums.length; i++){
+            prefixSum[i] = prefixSum[i - 1];
+            if( (nums[i] & 1) == (nums[i - 1] & 1) ) prefixSum[i] += 1;
+        }
+
+        for(int i = 0; i < queries.length; i++)
+            if ( prefixSum[queries[i][1]] - prefixSum[queries[i][0]] == 0 ) res[i] = true;
+        System.out.println(Arrays.toString(prefixSum));
+        return res;
+    }
+
+    public static boolean isHappy(final int n) {
+        if (n == 1) return true;
+        final Function<Integer, Integer> sos  = a -> {
+            int sum = 0;
+            while (a != 0){
+                sum += n % 10 * n % 10;
+                a /= 10;
+            }return sum;
+        };
+        int slow = n, fast = sos.apply(n);
+        while (fast != 1 && fast != slow){
+            slow = sos.apply(slow);
+            fast = sos.andThen(sos).apply(slow);
+        }
+        return fast == 1;
+    }
+
+    public int smallestValue(int n) {
+        final Function<Integer, boolean[]> getPrime = (a) -> {
+            final var ip = new boolean[a+1];
+            Arrays.fill(ip, true);
+            for(int p = 2; p * p <= a; p++)
+                if(ip[p])
+                    for(int i = p * p; i <= a; i += p)
+                        ip[i] = false;
+            return ip;
+        };
+        final var isPrime = getPrime.apply(n);
+
+        final Function<Integer, Integer> sop = a -> {
+            int sum = 0;
+            for(int i = 2; i <= a; i++)
+                if (isPrime[i] && a%i == 0)
+                    sum += i;
+            return sum;
+        };
+
+        var prev = n;
+        while (!isPrime[n]){
+            n = sop.apply(n);
+            if (prev == n) break;
+            prev = n;
+        }return n;
     }
 
     
