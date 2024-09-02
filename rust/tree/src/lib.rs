@@ -92,6 +92,234 @@ macro_rules! b {
     };
 }
 
+#[derive(Debug)]
+pub struct SmallerToLarger {
+    pub root: T,
+    pub min: i32,
+}
+
+#[derive(Debug)]
+pub struct LargerToSmaller {
+    pub root: T,
+    pub max: i32,
+}
+
+impl SmallerToLarger {
+    fn new(root: T) -> Self {
+        SmallerToLarger {
+            root,
+            min: i32::MIN,
+        }
+    }
+}
+
+impl LargerToSmaller {
+    fn new(root: T) -> Self {
+        LargerToSmaller {
+            root,
+            max: i32::MAX,
+        }
+    }
+}
+
+impl Iterator for SmallerToLarger {
+    type Item = i32;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while let Some(node) = self.root.clone() {
+            if node.borrow().left.is_some() && b!(node.borrow().left).val > self.min {
+                let mut pre = node.borrow().left.clone();
+                while b!(pre).right.is_some() && b!(pre).right != self.root {
+                    pre = pre.unwrap().borrow().right.clone();
+                }
+                if b!(pre).right == self.root {
+                    self.min = node.borrow().val;
+                    _ = pre.unwrap().borrow_mut().right.take();
+                    self.root = node.borrow().right.clone();
+                    break;
+                } else {
+                    pre.unwrap().borrow_mut().right = self.root.clone();
+                    self.root = node.borrow().left.clone();
+                }
+            } else {
+                self.min = node.borrow().val;
+                self.root = node.borrow().right.clone();
+                break;
+            }
+        }
+        Some(self.min)
+    }
+}
+
+pub fn max_ancestor_diff(root: T) -> i32 {
+    fn helper(root: T, mut min: i32, mut max: i32, mut res: i32) -> i32 {
+        if root.is_none() {
+            return res;
+        }
+        res = res.max((b!(root).val - min).abs().max((b!(root).val - max).abs()));
+        min = min.min(b!(root).val);
+        max = max.max(b!(root).val);
+        res = helper(b!(root).left.clone(), min, max, res);
+        res = helper(b!(root).right.clone(), min, max, res);
+        res
+    }
+    helper(root.clone(), b!(root).val, b!(root).val, 0)
+}
+
+impl Iterator for LargerToSmaller {
+    type Item = i32;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while let Some(node) = self.root.clone() {
+            if node.borrow().right.is_some() && b!(node.borrow().right).val < self.max {
+                let mut pre = node.borrow().right.clone();
+                while b!(pre).left.is_some() && b!(pre).left != self.root {
+                    pre = pre.unwrap().borrow().left.clone()
+                }
+                if b!(pre).left == self.root {
+                    self.max = node.borrow().val;
+                    _ = pre.unwrap().borrow_mut().left.take();
+                    self.root = node.borrow().left.clone();
+                    break;
+                } else {
+                    pre.unwrap().borrow_mut().left = self.root.clone();
+                    self.root = node.borrow().right.clone();
+                }
+            } else {
+                self.max = node.borrow().val;
+                self.root = node.borrow().left.clone();
+                break;
+            }
+        }
+        Some(self.max)
+    }
+}
+
+pub fn get_all_elements(root1: T, root2: T) -> Vec<i32> {
+    struct MorrisIter {
+        nxtright: T,
+        root: T,
+    }
+    impl MorrisIter {
+        fn new(root: T) -> Self {
+            let mut res = MorrisIter {
+                nxtright: root.clone(),
+                root,
+            };
+            res.next();
+            res
+        }
+
+        fn has_next(&self) -> bool {
+            self.root.is_some()
+        }
+
+        fn peek(&self) -> i32 {
+            b!(self.root).val
+        }
+
+        fn poll(&mut self) -> i32 {
+            let res = b!(self.root).val;
+            Self::next(self);
+            res
+        }
+
+        fn next(&mut self) {
+            self.root = self.nxtright.clone();
+            while let Some(node) = self.root.clone() {
+                if node.borrow().left.is_some() {
+                    let mut pre = node.borrow().left.clone();
+                    while b!(pre).right.is_some() && b!(pre).right != self.root {
+                        pre = pre.unwrap().borrow().right.clone();
+                    }
+                    if b!(pre).right == self.root {
+                        _ = pre.unwrap().borrow_mut().right.take();
+                        self.nxtright = b!(self.root).right.clone();
+                        break;
+                    } else {
+                        bmut!(pre).right = self.root.clone();
+                        self.root = node.borrow().left.clone();
+                    }
+                } else {
+                    self.nxtright = b!(self.root).right.clone();
+                    break;
+                }
+            }
+        }
+    }
+    let (mut res, mut iter1, mut iter2) =
+        (Vec::new(), MorrisIter::new(root1), MorrisIter::new(root2));
+    while iter1.has_next() && iter2.has_next() {
+        if iter1.peek() < iter2.peek() {
+            res.push(iter1.poll());
+        } else {
+            res.push(iter2.poll());
+        }
+    }
+    while iter1.has_next() {
+        res.push(iter1.poll());
+    }
+    while iter2.has_next() {
+        res.push(iter2.poll());
+    }
+    res
+}
+
+pub fn find_target(root: T, k: i32) -> bool {
+    use std::cmp::Ordering::{Equal, Greater, Less};
+    let (mut l_iter, mut r_iter) = (
+        SmallerToLarger::new(root.clone()),
+        LargerToSmaller::new(root),
+    );
+    let (mut l, mut r) = (l_iter.next().unwrap(), r_iter.next().unwrap());
+    while l < r {
+        match (l + r).cmp(&k) {
+            Less => l = l_iter.next().unwrap(),
+            Greater => r = r_iter.next().unwrap(),
+            Equal => return true,
+        }
+    }
+    false
+}
+
+pub fn build_tree(mut preorder: Vec<i32>, inorder: Vec<i32>) -> T {
+    let (root, mut i) = (tn!(preorder.remove(0)), 0);
+    let mut curr = root.clone();
+    for p in preorder {
+        if b!(curr).val == inorder[i] {
+            i += 1; // the parent of curr
+            while b!(curr).right.is_some() && b!(b!(curr).right).val == inorder[i] {
+                (curr, i) = (curr.unwrap().borrow_mut().right.take(), i + 1);
+            }
+            bmut!(curr).right = tn!(p, None, curr.clone());
+            curr = curr.unwrap().borrow().right.clone();
+        } else {
+            bmut!(curr).left = tn!(p, None, curr.clone());
+            curr = curr.unwrap().borrow().left.clone();
+        }
+    }
+    while b!(curr).right.is_some() {
+        curr = curr.unwrap().borrow_mut().right.take();
+    }
+    root
+}
+
+pub fn reverse_odd_levels(root: T) -> T {
+    fn helper(r1: T, r2: T, d: i32) {
+        if r1.is_none() && r2.is_none() {
+            return;
+        }
+        if (d & 1) == 1 {
+            bmut!(r1).val = b!(r2).val;
+            bmut!(r2).val = b!(r1).val;
+        }
+        helper(b!(r1).left.clone(), b!(r2).right.clone(), d + 1);
+        helper(b!(r1).right.clone(), b!(r2).left.clone(), d + 1);
+    }
+    helper(b!(root).left.clone(), b!(root).right.clone(), 1);
+    root
+}
+
 pub fn create_binary_tree(des: Vec<Vec<i32>>) -> T {
     let (mut nodes, mut has_parent) = (HashMap::<i32, T>::new(), HashMap::<i32, bool>::new());
     for d in des {
