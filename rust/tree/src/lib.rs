@@ -195,6 +195,34 @@ impl Iterator for LargerToSmaller {
     }
 }
 
+pub fn generate_trees(n: i32) -> Vec<T> {
+    let mut dp = HashMap::<(i32, i32), Rc<Vec<T>>>::new();
+    fn generate(left: i32, right: i32, dp: &mut HashMap<(i32, i32), Rc<Vec<T>>>) -> Rc<Vec<T>> {
+        if left > right {
+            return Rc::new(vec![None]);
+        }
+        let key = (left, right);
+        if dp.contains_key(&key) {
+            return dp.get(&key).unwrap().clone();
+        }
+        let mut res = Vec::new();
+        for val in left..=right {
+            for left_tree in generate(left, val - 1, dp).iter() {
+                for right_tree in generate(val + 1, right, dp).iter() {
+                    res.push(tn!(val, left_tree.clone(), right_tree.clone()));
+                }
+            }
+        }
+
+        let res = Rc::new(res);
+        dp.insert(key, res.clone());
+        res
+    }
+    let res = generate(1, n, &mut dp);
+    drop(dp);
+    Rc::into_inner(res).unwrap()
+}
+
 pub fn get_all_elements(root1: T, root2: T) -> Vec<i32> {
     struct MorrisIter {
         nxtright: T,
