@@ -1,5 +1,10 @@
 pub use std::{
-    cell::Ref, cell::RefCell, cell::RefMut, collections::HashMap, collections::VecDeque, rc::Rc,
+    cell::Ref,
+    cell::RefCell,
+    cell::RefMut,
+    cmp::Reverse,
+    collections::{BinaryHeap, HashMap, VecDeque},
+    rc::Rc,
 };
 pub type Node = Rc<RefCell<TreeNode>>;
 pub type T = Option<Rc<RefCell<TreeNode>>>;
@@ -195,6 +200,35 @@ impl Iterator for LargerToSmaller {
     }
 }
 
+pub fn is_cousins(root: T, x: i32, y: i32) -> bool {
+    let mut queue = VecDeque::new();
+    queue.push_back(root);
+    while !queue.is_empty() {
+        let mut parent = HashMap::new();
+        for _ in 0..queue.len() {
+            let node = queue.pop_front().unwrap();
+            for child in vec![b!(node).left.clone(), b!(node).right.clone()] {
+                if child.is_none() {
+                    continue;
+                }
+                queue.push_back(child.clone());
+                parent.insert(b!(child).val, node.clone());
+            }
+        }
+        if parent.contains_key(&x) ^ parent.contains_key(&y) {
+            return false;
+        }
+        if parent.contains_key(&x) && parent.contains_key(&y) {
+            if parent.get(&x).unwrap() == parent.get(&y).unwrap() {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
+    false
+}
+
 pub fn generate_trees(n: i32) -> Vec<T> {
     let mut dp = HashMap::<(i32, i32), Rc<Vec<T>>>::new();
     fn generate(left: i32, right: i32, dp: &mut HashMap<(i32, i32), Rc<Vec<T>>>) -> Rc<Vec<T>> {
@@ -221,6 +255,70 @@ pub fn generate_trees(n: i32) -> Vec<T> {
     let res = generate(1, n, &mut dp);
     drop(dp);
     Rc::into_inner(res).unwrap()
+}
+
+pub fn find_mode(root: T) -> Vec<i32> {
+    struct Morris {
+        root: T,
+    }
+
+    impl Morris {
+        fn new(root: T) -> Self {
+            Morris { root }
+        }
+    }
+
+    impl Iterator for Morris {
+        type Item = i32;
+
+        fn next(&mut self) -> Option<Self::Item> {
+            let mut res = i32::MIN;
+            while let Some(node) = self.root.clone() {
+                if node.borrow().left.is_some() {
+                    let mut pre = node.borrow().left.clone();
+                    while b!(pre).right.is_some() && b!(pre).right != self.root {
+                        pre = pre.unwrap().borrow().right.clone();
+                    }
+                    if b!(pre).right.is_some() {
+                        res = node.borrow().val;
+                        _ = bmut!(pre).right.take();
+                        self.root = node.borrow().right.clone();
+                        break;
+                    } else {
+                        bmut!(pre).right = self.root.clone();
+                        self.root = node.borrow().left.clone();
+                    }
+                } else {
+                    res = node.borrow().val;
+                    self.root = node.borrow().right.clone();
+                    break;
+                }
+            }
+            if self.root.is_none() {
+                None
+            } else {
+                Some(res)
+            }
+        }
+    }
+    let (mut modelist, mut modecount, mut currelem, mut currcount, iter) =
+        (Vec::new(), 0, i32::MIN, 0, Morris::new(root));
+    for elem in iter {
+        if currelem == elem {
+            currcount += 1
+        } else {
+            currelem = elem;
+            currcount = 1;
+        }
+        if currcount > modecount {
+            modecount = currcount;
+            modelist.clear();
+            modelist.push(currelem);
+        } else if modecount == currcount {
+            modelist.push(currelem);
+        }
+    }
+    modelist
 }
 
 pub fn get_all_elements(root1: T, root2: T) -> Vec<i32> {
@@ -588,6 +686,44 @@ pub fn binary_tree_paths(root: T) -> Vec<String> {
     let (mut res, mut path) = (Vec::new(), String::new());
     dfs(root, &mut path, &mut res);
     res
+}
+
+pub fn diameter_of_binary_tree(root: T) -> i32 {
+    fn height(root: T, max_diam: &mut i32) -> i32 {
+        if root.is_none() {
+            return 0;
+        }
+        let (left_height, right_height) = (
+            height(b!(root).left.clone(), max_diam),
+            height(b!(root).right.clone(), max_diam),
+        );
+        let curr_height = left_height + right_height;
+        *max_diam = (*max_diam).max(curr_height);
+        1 + left_height.max(right_height)
+    }
+    let mut max_diam = i32::MIN;
+    _ = height(root, &mut max_diam);
+    max_diam
+}
+
+struct KthLargest {
+    min_heap: BinaryHeap<Reverse<i32>>,
+    k: i32,
+}
+
+impl KthLargest {
+    fn new(k: i32, nums: Vec<i32>) -> Self {
+        let mut min_heap = BinaryHeap::new();
+        for num in nums {
+            min_heap.push(Reverse(num));
+        }
+        KthLargest { min_heap, k }
+    }
+
+    fn add(&mut self, val: i32) -> i32 {
+        self.min_heap.push(Reverse(val));
+        self.min_heap.peek().unwrap().0
+    }
 }
 
 pub fn find_tilt(root: T) -> i32 {
