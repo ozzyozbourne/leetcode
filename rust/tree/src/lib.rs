@@ -4,6 +4,7 @@ pub use std::{
     cell::RefMut,
     cmp::Reverse,
     collections::{BinaryHeap, HashMap, VecDeque},
+    mem::swap,
     rc::Rc,
 };
 pub type Node = Rc<RefCell<TreeNode>>;
@@ -23,6 +24,41 @@ impl TreeNode {
             left: None,
             right: None,
         }
+    }
+}
+
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct ListNode {
+    pub val: i32,
+    pub next: Option<Box<ListNode>>,
+}
+
+#[derive(PartialEq, Eq, Debug)]
+pub struct ListNodeProper {
+    pub val: i32,
+    pub next: Option<Rc<RefCell<ListNodeProper>>>,
+}
+
+impl ListNode {
+    fn new(val: i32) -> Self {
+        ListNode { next: None, val }
+    }
+}
+
+type B = Option<Box<ListNode>>;
+type L = Option<Rc<RefCell<ListNodeProper>>>;
+
+fn convert_box_to_rc_refcell(head: B) -> L {
+    match head {
+        Some(boxed_node) => {
+            let next = convert_box_to_rc_refcell(boxed_node.next);
+
+            Some(Rc::new(RefCell::new(ListNodeProper {
+                val: boxed_node.val,
+                next,
+            })))
+        }
+        None => None,
     }
 }
 
@@ -156,6 +192,44 @@ impl Iterator for SmallerToLarger {
     }
 }
 
+pub fn sorted_list_to_bst(mut head: B) -> T {
+    fn rotate_left_by_amount(mut root: T, count: i32) {
+        for _ in 0..count {
+            let right = b!(root).right.clone();
+            rotate_left(root.clone(), right);
+            root = root.unwrap().borrow().right.clone();
+        }
+    }
+    fn rotate_left(parent: T, node: T) {
+        let temp = b!(node).right.clone();
+        bmut!(node).right = b!(temp).left.clone();
+        bmut!(temp).left = node.clone();
+        bmut!(parent).right = temp.clone();
+    }
+
+    let dummy = tn!(1);
+    let (mut curr, mut count) = (dummy.clone(), 0_f64);
+
+    // Step 1 convert a sorted linked list to a vine
+    while let Some(mut node) = head {
+        (bmut!(curr).right, head, count) = (tn!(node.val).clone(), node.next.take(), count + 1.0);
+        curr = curr.unwrap().borrow().right.clone();
+    }
+
+    let (mut perfect_tree_node_count, count) = (
+        (2_f64.powf(count.log2().floor()) - 1.0) as i32,
+        count as i32,
+    );
+    // rotate left the extra amount of the node does that doesn't make a perfect tree
+    rotate_left_by_amount(dummy.clone(), count - perfect_tree_node_count);
+    while perfect_tree_node_count > 1 {
+        perfect_tree_node_count /= 2;
+        rotate_left_by_amount(dummy.clone(), perfect_tree_node_count);
+    }
+
+    dummy.unwrap().borrow_mut().right.take()
+}
+
 pub fn max_ancestor_diff(root: T) -> i32 {
     fn helper(root: T, mut min: i32, mut max: i32, mut res: i32) -> i32 {
         if root.is_none() {
@@ -257,6 +331,32 @@ pub fn generate_trees(n: i32) -> Vec<T> {
     Rc::into_inner(res).unwrap()
 }
 
+pub fn delete_node(root: T, key: i32) -> T {
+    if root.is_none() {
+        return root;
+    }
+
+    if key > b!(root).val {
+        bmut!(root).right = delete_node(b!(root).right.clone(), key);
+    } else if key < b!(root).val {
+        bmut!(root).left = delete_node(b!(root).left.clone(), key);
+    } else {
+        if b!(root).left.is_none() {
+            return b!(root).right.clone();
+        } else if b!(root).right.is_none() {
+            return b!(root).left.clone();
+        } else {
+            let mut curr = b!(root).right.clone();
+            while b!(curr).left.is_some() {
+                curr = curr.unwrap().borrow().left.clone();
+            }
+            bmut!(root).val = b!(curr).val;
+            bmut!(root).right = delete_node(b!(root).right.clone(), b!(root).val);
+        }
+    }
+    root
+}
+
 pub fn find_mode(root: T) -> Vec<i32> {
     struct Morris {
         root: T,
@@ -319,6 +419,47 @@ pub fn find_mode(root: T) -> Vec<i32> {
         }
     }
     modelist
+}
+
+pub fn recover_tree(root: &mut T) {
+    let (mut first, mut second, mut prev, mut root): (T, T, T, T) =
+        (None, None, None, root.clone());
+    let mut verify = |root: &T| {
+        if prev.is_none() || b!(prev).val < b!(root).val {
+            prev = root.clone();
+            return;
+        }
+        if first.is_none() {
+            first = prev.clone();
+            second = root.clone();
+        } else {
+            second = root.clone()
+        }
+    };
+
+    let mut morris = || {
+        while let Some(node) = root.clone() {
+            if node.borrow().left.is_some() {
+                let mut pre = node.borrow().left.clone();
+                while b!(pre).right.is_some() && b!(pre).right != root {
+                    pre = pre.unwrap().borrow().right.clone();
+                }
+                if b!(pre).right.is_some() {
+                    verify(&root);
+                    _ = pre.unwrap().borrow_mut().right.take();
+                    root = node.borrow().right.clone();
+                } else {
+                    pre.unwrap().borrow_mut().right = root.clone();
+                    root = node.borrow().left.clone();
+                }
+            } else {
+                verify(&root);
+                root = node.borrow().right.clone();
+            }
+        }
+    };
+    morris();
+    swap(&mut bmut!(first).val, &mut bmut!(second).val);
 }
 
 pub fn get_all_elements(root1: T, root2: T) -> Vec<i32> {
