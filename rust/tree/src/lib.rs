@@ -303,6 +303,67 @@ pub fn is_cousins(root: T, x: i32, y: i32) -> bool {
     false
 }
 
+pub fn closest_nodes(root: T, queries: Vec<i32>) -> Vec<Vec<i32>> {
+    let (mut inorder, mut res) = (Vec::new(), Vec::new());
+    let mut morris = |mut root: T| {
+        while let Some(node) = root.clone() {
+            if node.borrow().left.is_some() {
+                let mut pre = node.borrow().left.clone();
+                while b!(pre).right.is_some() && b!(pre).right != root {
+                    pre = pre.unwrap().borrow().right.clone();
+                }
+                if b!(pre).right.is_some() {
+                    inorder.push(node.borrow().val);
+                    _ = pre.unwrap().borrow_mut().right.take();
+                    root = node.borrow().right.clone();
+                } else {
+                    pre.unwrap().borrow_mut().right = root.clone();
+                    root = node.borrow().left.clone();
+                }
+            } else {
+                inorder.push(node.borrow().val);
+                root = node.borrow().right.clone();
+            }
+        }
+    };
+    morris(root.clone());
+    let upper_bound = |q: i32| -> i32 {
+        let (mut res, mut l, mut h) = (i32::MAX, 0, (inorder.len() - 1) as i32);
+        while l <= h {
+            let m = l + (h - l) / 2;
+            if inorder[m as usize] >= q {
+                res = res.min(inorder[m as usize]);
+                h = m - 1;
+            } else {
+                l = m + 1;
+            }
+        }
+        if res == i32::MAX {
+            -1
+        } else {
+            res
+        }
+    };
+    let lower_bound = |q: i32| -> i32 {
+        let (mut res, mut l, mut h) = (-1, 0, (inorder.len() - 1) as i32);
+        while l <= h {
+            let m = l + (h - l) / 2;
+            if inorder[m as usize] <= q {
+                res = res.max(inorder[m as usize]);
+                l = m + 1;
+            } else {
+                h = m - 1;
+            }
+        }
+        res
+    };
+
+    for q in queries {
+        res.push(vec![lower_bound(q), upper_bound(q)]);
+    }
+    res
+}
+
 pub fn generate_trees(n: i32) -> Vec<T> {
     let mut dp = HashMap::<(i32, i32), Rc<Vec<T>>>::new();
     fn generate(left: i32, right: i32, dp: &mut HashMap<(i32, i32), Rc<Vec<T>>>) -> Rc<Vec<T>> {
