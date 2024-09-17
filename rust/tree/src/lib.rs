@@ -1,7 +1,5 @@
 pub use std::{
-    cell::Ref,
-    cell::RefCell,
-    cell::RefMut,
+    cell::{Ref, RefCell, RefMut},
     cmp::Reverse,
     collections::{BinaryHeap, HashMap, VecDeque},
     mem::swap,
@@ -9,6 +7,9 @@ pub use std::{
 };
 pub type Node = Rc<RefCell<TreeNode>>;
 pub type T = Option<Rc<RefCell<TreeNode>>>;
+
+pub type B = Option<Box<ListNode>>;
+pub type L = Option<Rc<RefCell<ListNodeProper>>>;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct TreeNode {
@@ -44,9 +45,6 @@ impl ListNode {
         ListNode { next: None, val }
     }
 }
-
-type B = Option<Box<ListNode>>;
-type L = Option<Rc<RefCell<ListNodeProper>>>;
 
 fn convert_box_to_rc_refcell(head: B) -> L {
     match head {
