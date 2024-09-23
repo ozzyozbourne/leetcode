@@ -1,3 +1,10 @@
+// note to self -> when using refcell never borrow in the parameters even if after borrowing you
+// clone the value in the borrow stays alive all the way in the function call
+// and if we try to borrow the same node again inside the function as mutable then will
+// get an already borrowed error since borrow stays alive on the same line as
+// when used in the function parameter then it stays alive for the while duration of the
+// function call since it you want to do this make sure that inside the function there
+// is no mutable borrow of the same parameter else will not work
 pub use std::{
     cell::{Ref, RefCell, RefMut},
     cmp::Reverse,
@@ -228,6 +235,44 @@ pub fn sorted_list_to_bst(mut head: B) -> T {
     dummy.unwrap().borrow_mut().right.take()
 }
 
+pub fn sorted_array_to_bst(nums: Vec<i32>) -> T {
+    fn get_perfect_tree_node_count(total_no_of_nodes: i32) -> i32 {
+        let log_of_two = ((total_no_of_nodes + 1) as f32).log2().floor() as u32;
+        2_i32.pow(log_of_two) - 1
+    }
+
+    fn rotate_left_by_amount(mut root: T, amount: i32) {
+        for _ in 0..amount {
+            let right = b!(root).right.clone();
+            rotate_left(root.clone(), right);
+            root = root.unwrap().borrow().right.clone();
+        }
+    }
+
+    fn rotate_left(parent: T, node: T) {
+        let temp = b!(node).right.clone();
+        bmut!(node).right = b!(temp).left.clone();
+        bmut!(temp).left = node;
+        parent.unwrap().borrow_mut().right = temp;
+    }
+
+    let (dummy, node_count) = (tn!(-1), nums.len() as i32);
+    let mut curr = dummy.clone();
+    for num in nums {
+        bmut!(curr).right = tn!(num);
+        curr = curr.unwrap().borrow().right.clone();
+    }
+
+    let mut perfect_tree_node_count = get_perfect_tree_node_count(node_count);
+    rotate_left_by_amount(dummy.clone(), node_count - perfect_tree_node_count);
+    while perfect_tree_node_count > 1 {
+        perfect_tree_node_count /= 2;
+        rotate_left_by_amount(dummy.clone(), perfect_tree_node_count);
+    }
+
+    dummy.unwrap().borrow_mut().right.take()
+}
+
 pub fn max_ancestor_diff(root: T) -> i32 {
     fn helper(root: T, mut min: i32, mut max: i32, mut res: i32) -> i32 {
         if root.is_none() {
@@ -241,6 +286,29 @@ pub fn max_ancestor_diff(root: T) -> i32 {
         res
     }
     helper(root.clone(), b!(root).val, b!(root).val, 0)
+}
+
+pub fn path_in_zig_zag_tree(mut label: i32) -> Vec<i32> {
+    if label == 1 {
+        return vec![1];
+    }
+    let mut res = Vec::new();
+    while label != 1 {
+        res.push(label);
+        let level = label.ilog2() as u32;
+        if (level & 1) == 0 {
+            let dist = 2_i32.pow(level) - 1 - label;
+            let num = dist + 2_i32.pow(level - 1);
+            label /= num;
+        } else {
+            let dist = label - 2_i32.pow(level - 1);
+            let num = 2_i32.pow(level) - 1 - dist;
+            label /= num;
+        }
+    }
+    res.push(label);
+    res.reverse();
+    res
 }
 
 impl Iterator for LargerToSmaller {
