@@ -273,6 +273,30 @@ pub fn sorted_array_to_bst(nums: Vec<i32>) -> T {
     dummy.unwrap().borrow_mut().right.take()
 }
 
+pub fn find_winners(matches: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+    let mut lost_count = vec![-1; 100001];
+    for m in matches {
+        let (w, l) = (m[0] as usize, m[1] as usize);
+        if lost_count[w] == -1 {
+            lost_count[w] = 0;
+        }
+        if lost_count[l] == -1 {
+            lost_count[l] = 1;
+        } else {
+            lost_count[l] += 1;
+        }
+    }
+    let (mut no_loss, mut one_loss) = (Vec::new(), Vec::new());
+    for i in 0..lost_count.len() {
+        if lost_count[i] == 0 {
+            no_loss.push(i as i32);
+        } else if lost_count[i] == 1 {
+            one_loss.push(i as i32);
+        }
+    }
+    vec![no_loss, one_loss]
+}
+
 pub fn max_ancestor_diff(root: T) -> i32 {
     fn helper(root: T, mut min: i32, mut max: i32, mut res: i32) -> i32 {
         if root.is_none() {
