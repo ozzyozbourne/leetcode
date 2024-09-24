@@ -297,6 +297,58 @@ pub fn find_winners(matches: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
     vec![no_loss, one_loss]
 }
 
+pub fn get_directions(root: T, start_value: i32, dest_value: i32) -> String {
+    struct PathString {
+        root_to_p: String,
+        root_to_q: String,
+        path_traced: String,
+    }
+    fn dfs(root: T, path_string: &mut PathString, p: i32, q: i32) {
+        if root.is_none() {
+            return;
+        }
+        if b!(root).val == p {
+            path_string.root_to_p = path_string.path_traced.clone();
+        }
+        if b!(root).val == q {
+            path_string.root_to_q = path_string.path_traced.clone();
+        }
+
+        path_string.path_traced.push_str("L");
+        dfs(b!(root).left.clone(), path_string, p, q);
+        _ = path_string.path_traced.pop();
+
+        path_string.path_traced.push_str("R");
+        dfs(b!(root).right.clone(), path_string, p, q);
+        _ = path_string.path_traced.pop();
+    }
+    let mut path_string = PathString {
+        root_to_p: String::new(),
+        root_to_q: String::new(),
+        path_traced: String::new(),
+    };
+
+    dfs(root.clone(), &mut path_string, start_value, dest_value);
+
+    let mut common = 0;
+    for (ch1, ch2) in path_string
+        .root_to_q
+        .chars()
+        .zip(path_string.root_to_p.chars())
+    {
+        if ch1 != ch2 {
+            break;
+        }
+        common += ch1.len_utf8();
+    }
+
+    path_string.root_to_p = "U".repeat(common);
+    path_string
+        .root_to_p
+        .push_str(&path_string.root_to_q[common..]);
+    path_string.root_to_p
+}
+
 pub fn max_ancestor_diff(root: T) -> i32 {
     fn helper(root: T, mut min: i32, mut max: i32, mut res: i32) -> i32 {
         if root.is_none() {
