@@ -7,6 +7,7 @@
 // is no mutable borrow of the same parameter else will not work
 pub use std::{
     cell::{Ref, RefCell, RefMut},
+    cmp::max,
     cmp::Reverse,
     collections::{BinaryHeap, HashMap, VecDeque},
     mem::swap,
@@ -234,13 +235,32 @@ pub fn sorted_list_to_bst(mut head: B) -> T {
 
     dummy.unwrap().borrow_mut().right.take()
 }
-
+pub fn build_tree_post_in(inorder: Vec<i32>, mut postorder: Vec<i32>) -> T {
+    let (root, mut i) = (tn!(postorder.pop().unwrap()), inorder.len() - 1);
+    let mut curr = root.clone();
+    for p in postorder.into_iter().rev() {
+        if b!(curr).val == inorder[i] {
+            i -= 1;
+            while b!(curr).left.is_some() && b!(b!(curr).left).val == inorder[i] {
+                (curr, i) = (curr.unwrap().borrow_mut().left.take(), i - 1);
+            }
+            let left = tn!(p, b!(curr).left.clone(), None);
+            (bmut!(curr).left, curr) = (left.clone(), left);
+        } else {
+            bmut!(curr).right = tn!(p, curr.clone(), None);
+            curr = curr.unwrap().borrow().right.clone();
+        }
+    }
+    while b!(curr).left.is_some() {
+        curr = curr.unwrap().borrow_mut().left.take();
+    }
+    root
+}
 pub fn sorted_array_to_bst(nums: Vec<i32>) -> T {
     fn get_perfect_tree_node_count(total_no_of_nodes: i32) -> i32 {
         let log_of_two = ((total_no_of_nodes + 1) as f32).log2().floor() as u32;
         2_i32.pow(log_of_two) - 1
     }
-
     fn rotate_left_by_amount(mut root: T, amount: i32) {
         for _ in 0..amount {
             let right = b!(root).right.clone();
@@ -347,6 +367,29 @@ pub fn get_directions(root: T, start_value: i32, dest_value: i32) -> String {
         .root_to_p
         .push_str(&path_string.root_to_q[common..]);
     path_string.root_to_p
+}
+
+pub fn largest_values(root: T) -> Vec<i32> {
+    if root.is_none() {
+        return Vec::new();
+    }
+    let (mut queue, mut res) = (VecDeque::new(), Vec::new());
+    queue.push_back(root);
+    while !queue.is_empty() {
+        let (mut curr_max, length) = (i32::MIN, queue.len());
+        for _ in 0..length {
+            let node = queue.pop_front().unwrap();
+            curr_max = max(curr_max, b!(node).val);
+            if b!(node).left.is_some() {
+                queue.push_back(b!(node).left.clone());
+            }
+            if b!(node).right.is_some() {
+                queue.push_back(b!(node).right.clone());
+            }
+        }
+        res.push(curr_max);
+    }
+    res
 }
 
 pub fn max_ancestor_diff(root: T) -> i32 {
