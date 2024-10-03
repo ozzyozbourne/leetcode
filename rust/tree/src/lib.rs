@@ -198,6 +198,46 @@ impl Iterator for SmallerToLarger {
     }
 }
 
+pub fn array_rank_transform(mut arr: Vec<i32>) -> Vec<i32> {
+    let mut rk = arr.clone();
+    rk.sort_unstable();
+    rk.dedup();
+    for n in &mut arr {
+        *n = rk.partition_point(|&x| x < *n) as i32 + 1;
+    }
+    arr
+}
+
+pub fn min_subarray(nums: Vec<i32>, p: i32) -> i32 {
+    use std::{cmp::min, collections::HashMap};
+    let (nums, p) = (
+        nums.into_iter().map(|x| x as i64).collect::<Vec<i64>>(),
+        p as i64,
+    );
+    let (remain, mut curr_sum, mut res, mut remain_to_idx) = (
+        nums.iter().sum::<i64>() % p,
+        0,
+        nums.len() as i64,
+        vec![(0, -1)].into_iter().collect::<HashMap<i64, i64>>(),
+    );
+    if remain == 0 {
+        return 0;
+    }
+    for (i, num) in nums.iter().enumerate() {
+        curr_sum = (curr_sum + num) % p;
+        let prefix = (curr_sum - remain + p) % p as i64;
+        if remain_to_idx.contains_key(&(prefix)) {
+            res = min(res, i as i64 - *remain_to_idx.get(&prefix).unwrap());
+        }
+        _ = remain_to_idx.insert(curr_sum, i as i64);
+    }
+    if res as usize == nums.len() {
+        -1
+    } else {
+        res as _
+    }
+}
+
 pub fn sorted_list_to_bst(mut head: B) -> T {
     fn rotate_left_by_amount(mut root: T, count: i32) {
         for _ in 0..count {
@@ -291,6 +331,21 @@ pub fn sorted_array_to_bst(nums: Vec<i32>) -> T {
     }
 
     dummy.unwrap().borrow_mut().right.take()
+}
+pub fn can_arrange(nums: Vec<i32>, k: i32) -> bool {
+    let mut hash = vec![0; k as usize];
+    for num in nums {
+        hash[((num % k + k) % k) as usize] += 1;
+    }
+    if (hash[0] & 1) == 1 {
+        return false;
+    }
+    for i in 1..=hash.len() / 2 {
+        if hash[i] != hash[k as usize - i] {
+            return false;
+        }
+    }
+    true
 }
 
 pub fn find_winners(matches: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
