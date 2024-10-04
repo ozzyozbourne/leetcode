@@ -208,6 +208,40 @@ pub fn array_rank_transform(mut arr: Vec<i32>) -> Vec<i32> {
     arr
 }
 
+pub fn check_subarray_sum(nums: Vec<i32>, k: i32) -> bool {
+    let (mut prefix_sum, mut prefix_map) = (
+        0,
+        vec![(0, 0)]
+            .into_iter()
+            .collect::<std::collections::HashMap<i32, usize>>(),
+    );
+    for (i, v) in nums.into_iter().enumerate() {
+        prefix_sum = (prefix_sum + v) % k;
+        if prefix_map.contains_key(&prefix_sum) {
+            if i + 1 - prefix_map.get(&prefix_sum).unwrap() >= 2 {
+                return true;
+            }
+        } else {
+            prefix_map.insert(prefix_sum, i + 1);
+        }
+    }
+    false
+}
+
+pub fn subarrays_div_by_k(nums: Vec<i32>, k: i32) -> i32 {
+    use std::collections::HashMap;
+    let (mut res, mut prefix_sum, mut prefix_map) = (
+        0,
+        0,
+        vec![(0, 1)].into_iter().collect::<HashMap<i32, i32>>(),
+    );
+    for num in nums {
+        prefix_sum = (((prefix_sum + num) % k) + k) % k;
+        res += *prefix_map.entry(prefix_sum).or_insert(0);
+        *prefix_map.get_mut(&prefix_sum).unwrap() += 1;
+    }
+    res
+}
 pub fn min_subarray(nums: Vec<i32>, p: i32) -> i32 {
     use std::{cmp::min, collections::HashMap};
     let (nums, p) = (
