@@ -242,6 +242,82 @@ pub fn subarrays_div_by_k(nums: Vec<i32>, k: i32) -> i32 {
     }
     res
 }
+
+pub fn check_inclusion(s1: String, s2: String) -> bool {
+    if s1.len() > s2.len() {
+        return false;
+    }
+    let (mut s1_count, mut s2_count, mut matches, mut l, s1_bytes, s2_bytes) =
+        ([0; 26], [0; 26], 0, 0, s1.as_bytes(), s2.as_bytes());
+
+    // Create the initial window
+    for i in 0..s1_bytes.len() {
+        s1_count[(s1_bytes[i] - b'a') as usize] += 1;
+        s2_count[(s2_bytes[i] - b'a') as usize] += 1;
+    }
+
+    // Initialize the matches
+    for i in 0..26 {
+        if s1_count[i] == s2_count[i] {
+            matches += 1;
+        }
+    }
+
+    // Start sliding the window
+    for r in s1_bytes.len()..s2_bytes.len() {
+        if matches == 26 {
+            return true;
+        }
+
+        // Add a new character to the window
+        let index = (s2_bytes[r] - b'a') as usize;
+        s2_count[index] += 1;
+        if s2_count[index] == s1_count[index] {
+            matches += 1
+        } else if s2_count[index] == s1_count[index] + 1 {
+            matches -= 1;
+        }
+
+        // Remove old character from the window
+        let index = (s2_bytes[l] - b'a') as usize;
+        s2_count[index] -= 1;
+        if s2_count[index] == s1_count[index] {
+            matches += 1;
+        } else if s2_count[index] == s1_count[index] - 1 {
+            matches -= 1;
+        }
+
+        l += 1;
+    }
+
+    matches == 26
+}
+
+pub fn are_sentences_similar(sentence1: String, sentence2: String) -> bool {
+    let (mut s1, mut s2, mut l) = (
+        sentence1.split(' ').collect::<Vec<&str>>(),
+        sentence2.split(' ').collect::<Vec<&str>>(),
+        0,
+    );
+
+    if s1.len() > s2.len() {
+        swap(&mut s1, &mut s2);
+    }
+
+    // Getting the matching prefix
+    while l < s1.len() && s1[l] == s2[l] {
+        l += 1;
+    }
+
+    let (mut r1, mut r2) = (s1.len() - 1, s2.len() - 1);
+    while r1 >= l && s1[r1] == s2[r2] {
+        r1 -= 1;
+        r2 -= 1;
+    }
+
+    l > r1
+}
+
 pub fn min_subarray(nums: Vec<i32>, p: i32) -> i32 {
     use std::{cmp::min, collections::HashMap};
     let (nums, p) = (
@@ -308,6 +384,32 @@ pub fn sorted_list_to_bst(mut head: B) -> T {
     }
 
     dummy.unwrap().borrow_mut().right.take()
+}
+
+pub fn divide_players(skill: Vec<i32>) -> i64 {
+    let (total_skill, mut skill_frequency) =
+        (skill.iter().map(|x| *x as usize).sum::<usize>(), [0; 1001]);
+    for player_skill in skill.iter() {
+        skill_frequency[*player_skill as usize] += 1;
+    }
+    if total_skill % (skill.len() >> 1) != 0 {
+        return -1;
+    }
+
+    let (target_team_skill, mut total_chemistry) = (total_skill / (skill.len() >> 1), 0);
+
+    for player_skill in skill {
+        let partner_skill = target_team_skill - player_skill as usize;
+
+        if skill_frequency[partner_skill] == 0 {
+            return -1;
+        }
+
+        total_chemistry += player_skill as usize * partner_skill;
+        skill_frequency[partner_skill as usize] -= 1;
+    }
+
+    (total_chemistry >> 1) as _
 }
 pub fn build_tree_post_in(inorder: Vec<i32>, mut postorder: Vec<i32>) -> T {
     let (root, mut i) = (tn!(postorder.pop().unwrap()), inorder.len() - 1);
