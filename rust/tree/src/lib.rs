@@ -198,6 +198,39 @@ impl Iterator for SmallerToLarger {
     }
 }
 
+pub fn smallest_chair(times: Vec<Vec<i32>>, target_friend: i32) -> i32 {
+    use std::{cmp::Reverse, collections::BinaryHeap};
+    let (mut used_chairs, mut available_chairs, mut times, mut chair) = (
+        BinaryHeap::<Reverse<(i32, i32)>>::new(),
+        (0..times.len() as i32)
+            .map(Reverse)
+            .collect::<BinaryHeap<Reverse<i32>>>(),
+        times
+            .into_iter()
+            .enumerate()
+            .map(|(i, t)| (t[0], t[1], i as i32))
+            .collect::<Vec<(i32, i32, i32)>>(),
+        0,
+    );
+
+    times.sort_unstable();
+
+    for (a, l, i) in times {
+        while !used_chairs.is_empty() && used_chairs.peek().unwrap().0 .0 <= a {
+            available_chairs.push(Reverse(used_chairs.pop().unwrap().0 .1));
+        }
+
+        chair = available_chairs.pop().unwrap().0;
+        used_chairs.push(Reverse((l, chair)));
+
+        if target_friend == i {
+            break;
+        }
+    }
+
+    chair
+}
+
 pub fn array_rank_transform(mut arr: Vec<i32>) -> Vec<i32> {
     let mut rk = arr.clone();
     rk.sort_unstable();
