@@ -188,3 +188,58 @@ mod lc_7 {
         }
     }
 }
+
+pub fn erase_overlap_intervals(mut intervals: Vec<Vec<i32>>) -> i32 {
+    intervals.sort_by_key(|x| x[1]);
+    let (mut ans, mut prev) = (-1, intervals.remove(0));
+    for interval in intervals {
+        if interval[0] < prev[1] {
+            ans += 1;
+        } else {
+            prev = interval;
+        }
+    }
+    ans
+}
+
+pub fn count_ways(mut ranges: Vec<Vec<i32>>) -> i32 {
+    fn power(mut a: i64, mut n: i64, p: i64) -> i64 {
+        let mut res = 1;
+        while n > 0 {
+            if n % 2 == 1 {
+                res = (res * a) % p;
+                n -= 1;
+            } else {
+                a = (a * a) % p;
+                n /= 2;
+            }
+        }
+        res
+    }
+
+    const MOD: i64 = 1_000_000_007;
+    ranges.sort_unstable();
+
+    let mut temp: Vec<Vec<i32>> = Vec::new();
+    temp.push(ranges.remove(0));
+
+    // Process remaining ranges
+    for i in 1..ranges.len() {
+        let last_idx = temp.len() - 1;
+        let last_first = temp[last_idx][0];
+        let last_val = temp[last_idx][1];
+
+        if ranges[i][0] > last_val {
+            // No overlap, add new range
+            temp.push(ranges[i].clone());
+        } else {
+            // Overlap found, merge ranges
+            temp.pop();
+            let final_last = last_val.max(ranges[i][1]);
+            temp.push(vec![last_first, final_last]);
+        }
+    }
+
+    // Calculate 2^temp.len() % MOD
+    power(2, temp.len() as i64, MOD) as i32
+}
