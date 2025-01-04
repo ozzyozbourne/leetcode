@@ -44,3 +44,40 @@ mod lc_347 {
         );
     }
 }
+
+#[cfg(test)]
+mod lc_1547 {
+    pub fn min_cost(n: i32, cuts: Vec<i32>) -> i32 {
+        use std::collections::HashMap;
+
+        fn dfs(l: i32, r: i32, cuts: &Vec<i32>, dp: &mut HashMap<(i32, i32), i32>) -> i32 {
+            // Base case: if the segment is of length 1
+            if r - l == 1 {
+                return 0;
+            }
+
+            // Check if we've already computed this subproblem
+            if let Some(&result) = dp.get(&(l, r)) {
+                return result;
+            }
+
+            // Initialize result to maximum possible value
+            let mut res = i32::MAX;
+
+            // Try each possible cut position
+            for &c in cuts.iter() {
+                if l < c && c < r {
+                    let cost = (r - l) + dfs(l, c, cuts, dp) + dfs(c, r, cuts, dp);
+                    res = res.min(cost);
+                }
+            }
+            res = if res == i32::MAX { 0 } else { res };
+            // Store and return result
+            dp.insert((l, r), res);
+            res
+        }
+
+        // Start the recursion
+        dfs(0, n, &cuts, &mut HashMap::new())
+    }
+}
