@@ -63,3 +63,25 @@ mod lc_1598_crawler_log_folder {
         assert_eq!(min_operations(vec!["d1/", "d2/", "../", "d21/", "./"]), 2);
     }
 }
+
+#[cfg(test)]
+mod lc_848_shifting_letters {
+    pub fn shifting_letters(s: String, shifts: Vec<i32>) -> String {
+        let (mut ans, mut x) = (
+            Vec::with_capacity(s.len()),
+            shifts.iter().map(|&n| n as i64).sum::<i64>() % 26,
+        );
+        for (i, c) in s.bytes().into_iter().enumerate() {
+            let index = (c - b'a') as i64;
+            ans.push(b'a' + (index + x).rem_euclid(26) as u8);
+            x = (x - shifts[i] as i64).rem_euclid(26);
+        }
+        String::from_utf8(ans).unwrap()
+    }
+
+    #[test]
+    fn checker() {
+        let res = shifting_letters("xrdofd".to_string(), vec![70, 41, 71, 72, 73, 84]);
+        println!("{:?}\n", res);
+    }
+}

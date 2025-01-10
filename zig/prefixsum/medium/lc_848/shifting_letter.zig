@@ -1,23 +1,20 @@
 const std = @import("std");
 
 pub fn shifting_letter(gpa: std.mem.Allocator, s: []const u8, shifts: []const i32 ) ![]const u8 {
-    var ans, var x: i32 = .{ std.ArrayList(u8).init(gpa), 0 };
+    var ans, var x: i64 = .{ std.ArrayList(u8).init(gpa), 0 };
 
     for (shifts) |shift| { x += shift; }
     x = @mod(x, 26); 
 
     for (s, 0..) |c, i| {
-        const index:i32 = @intCast(c - 'a');
-        const char:u8 = @intCast(@mod(index + x, 26));
-        try ans.append('a' + char);
+        const index:i64 = @intCast(c - 'a');
+        try ans.append('a' + @as(u8, @intCast(@mod(index + x, 26))));
         x = @mod(x - shifts[i], 26);
     }
-
     return ans.toOwnedSlice();
 }
 
 test "lc_848_test" {
-
     const TestCase = struct {
         s: []const u8,
         shifts: []const i32,
