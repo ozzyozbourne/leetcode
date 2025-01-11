@@ -85,3 +85,19 @@ mod lc_848_shifting_letters {
         println!("{:?}\n", res);
     }
 }
+
+#[cfg(test)]
+mod lc_1400_contruction_k_palindrome_strings {
+    pub fn can_construct(s: String, k: i32) -> bool {
+        match s.len() {
+            len if len < k as usize => false,
+            len if len == k as usize => true,
+            _ => {
+                s.bytes()
+                    .fold(0_i32, |acc, c| acc ^ (1 << (c - b'a')))
+                    .count_ones()
+                    <= k as u32
+            }
+        }
+    }
+}
