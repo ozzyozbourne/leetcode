@@ -101,3 +101,32 @@ mod lc_1400_contruction_k_palindrome_strings {
         }
     }
 }
+
+#[cfg(test)]
+mod lc_816_word_subsets {
+    pub fn word_subsets(w1: Vec<String>, w2: Vec<String>) -> Vec<String> {
+        fn count(w: &String) -> Vec<i32> {
+            let mut csum = vec![0; 26];
+            for c in w.bytes() {
+                csum[(c - b'a') as usize] += 1;
+            }
+            csum
+        }
+
+        let mut bsum = vec![0; 26];
+
+        for w in w2 {
+            let csum = count(&w);
+            for i in 0..26 {
+                bsum[i] = bsum[i].max(csum[i]);
+            }
+        }
+
+        w1.into_iter()
+            .filter(|w| {
+                let freq = count(w);
+                (0..26).all(|i| freq[i] >= bsum[i])
+            })
+            .collect()
+    }
+}
