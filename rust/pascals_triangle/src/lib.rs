@@ -57,3 +57,22 @@ mod lc_2099 {
     }
 }
 
+#[cfg(test)]
+mod lc_198 {
+    pub fn longest_consecutive(nums: Vec<i32>) -> i32 {
+        let (set, mut longest) = (
+            nums.into_iter().collect::<std::collections::HashSet<i32>>(),
+            0,
+        );
+        for n in set.iter() {
+            if set.contains(&n) {
+                let mut length = 0;
+                while set.contains(&(n + length)) {
+                    length += 1;
+                }
+                longest = longest.max(length);
+            }
+        }
+        longest
+    }
+}
