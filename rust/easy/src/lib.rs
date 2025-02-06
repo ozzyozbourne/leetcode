@@ -666,3 +666,83 @@ mod lc_3024 {
         }
     }
 }
+
+#[cfg(test)]
+mod lc_2381 {
+    pub fn shifting_letters(s: String, shifts: Vec<Vec<i32>>) -> String {
+        let (mut diff, mut ch, mut prefix_sum) = (vec![0; s.len() + 1], s.into_bytes(), 0);
+
+        for (st, en, dr) in shifts
+            .into_iter()
+            .map(|i| (i[0] as usize, i[1] as usize, i[2] as usize))
+        {
+            diff[st] += if dr == 1 { 1 } else { -1 };
+            diff[en + 1] += if dr == 1 { -1 } else { 1 };
+        }
+
+        for i in 0..ch.len() {
+            prefix_sum += diff[i];
+            ch[i] = b'a' + (((ch[i] - b'a') as i32 + prefix_sum) % 26) as u8;
+        }
+
+        String::from_utf8(ch).unwrap()
+    }
+}
+
+#[cfg(test)]
+mod lc_1769 {
+    pub fn min_operations(boxes: String) -> Vec<i32> {
+        let (mut ops, mut cnt, mut res, boxes) = (0, 0, vec![0; boxes.len()], boxes.into_bytes());
+
+        for (i, &v) in boxes.iter().enumerate() {
+            res[i] += ops;
+            cnt += if v == b'1' { 1 } else { 0 };
+            ops += cnt;
+        }
+
+        let (mut ops, mut cnt) = (0, 0);
+
+        for (i, v) in boxes.into_iter().rev().enumerate() {
+            res[i] += ops;
+            cnt += if v == b'1' { 1 } else { 0 };
+            ops += cnt;
+        }
+
+        res
+    }
+}
+
+#[cfg(test)]
+mod lc_208 {
+    use std::collections::HashMap;
+
+    #[derive(Default)]
+    struct Trie {
+        children: HashMap<char, Trie>,
+        is_leaf: bool,
+    }
+
+    impl Trie {
+        fn new() -> Self {
+            Trie::default()
+        }
+
+        fn insert(&mut self, word: String) {
+            word.chars()
+                .fold(self, |node, c| node.children.entry(c).or_default())
+                .is_leaf = true;
+        }
+
+        fn get(&self, word: String) -> Option<&Trie> {
+            word.chars().try_fold(self, |node, c| node.children.get(&c))
+        }
+
+        fn search(&self, word: String) -> bool {
+            self.get(word).map_or(false, |node| node.is_leaf)
+        }
+
+        fn search_with(&self, prefix: String) -> bool {
+            self.get(prefix).is_some()
+        }
+    }
+}
