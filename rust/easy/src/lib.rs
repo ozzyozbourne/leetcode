@@ -746,3 +746,42 @@ mod lc_208 {
         }
     }
 }
+
+#[cfg(test)]
+mod lc_1162 {
+    use std::collections::VecDeque;
+    pub fn max_distance(mut grid: Vec<Vec<i32>>) -> i32 {
+        let (n, mut q, mut distance, dirs) = (
+            grid.len(),
+            VecDeque::new(),
+            0,
+            vec![(0, 1), (0, -1), (1, 0), (-1, 0)],
+        );
+
+        for i in 0..n {
+            for j in 0..n {
+                if grid[i][j] == 1 {
+                    q.push_back((i as i32, j as i32));
+                }
+            }
+        }
+
+        while !q.is_empty() {
+            for _ in 0..q.len() {
+                let (x, y) = q.pop_front().unwrap();
+                for (dx, dy) in dirs.iter() {
+                    let (i, j) = (x + dx, y + dy);
+                    if (0 <= i && i < n as i32)
+                        && (0 <= j && j < n as i32)
+                        && grid[i as usize][j as usize] == 0
+                    {
+                        grid[i as usize][j as usize] = 1;
+                        q.push_back((i, j));
+                    }
+                }
+            }
+            distance += 1;
+        }
+        distance - 1
+    }
+}
