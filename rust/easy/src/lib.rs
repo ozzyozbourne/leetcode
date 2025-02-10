@@ -785,3 +785,44 @@ mod lc_1162 {
         distance - 1
     }
 }
+
+#[cfg(test)]
+mod lc_93 {
+    pub fn restore_ip_addresses(s: String) -> Vec<String> {
+        if s.len() > 12 {
+            return vec![];
+        }
+        let (mut res, s) = (vec![], s.as_bytes());
+
+        fn backtract(res: &mut Vec<String>, i: usize, dots: usize, cur: &mut String, s: &[u8]) {
+            if dots > 4 {
+                return;
+            }
+            if dots == 4 && i == s.len() {
+                res.push(cur[..cur.len() - 1].to_string());
+                return;
+            }
+            for j in i..(i + 3).min(s.len()) {
+                if j > i && s[0] == b'0' {
+                    return;
+                }
+                if std::str::from_utf8(&s[i..=j])
+                    .unwrap()
+                    .parse::<u32>()
+                    .unwrap()
+                    > 255
+                {
+                    return;
+                }
+                let trun = cur.len();
+                cur.push_str(std::str::from_utf8(&s[i..=j]).unwrap());
+                cur.push('.');
+                backtract(res, j + 1, dots + 1, cur, s);
+                cur.truncate(trun);
+            }
+        }
+
+        backtract(&mut res, 0, 0, &mut String::new(), &s);
+        res
+    }
+}
