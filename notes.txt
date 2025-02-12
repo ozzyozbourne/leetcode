@@ -1,0 +1,1 @@
+for lc_542 we need do a multi source bfs meaining we have to start the bfs from multiple points and the each level is the value of the queue lenght before we start the bfs, in the bfs we will be adding matrix co-ordinates this also can be used a tick or a clock each level os h

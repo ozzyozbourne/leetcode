@@ -826,3 +826,94 @@ mod lc_93 {
         res
     }
 }
+#[cfg(test)]
+mod lc_542 {
+    use std::collections::VecDeque;
+
+    pub fn update_matrix(mut mat: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+        let (mut res, mut q) = (
+            vec![vec![false; mat[0].len()]; mat.len()],
+            VecDeque::<(i32, i32)>::new(),
+        );
+        let (dirs, mut distance) = (vec![(0, 1), (0, -1), (1, 0), (-1, 0)], 1);
+
+        for (i, r) in mat.iter().enumerate() {
+            for (j, &c) in r.iter().enumerate() {
+                if c == 0 {
+                    res[i][j] = true;
+                    q.push_back((i as i32, j as i32));
+                }
+            }
+        }
+
+        while !q.is_empty() {
+            for _ in 0..q.len() {
+                let (x, y) = q.pop_front().unwrap();
+                for (dx, dy) in dirs.iter() {
+                    let (i, j) = (dx + x, dy + y);
+                    if (0 <= i && i < mat.len() as i32)
+                        && (0 <= j && j < mat[0].len() as i32)
+                        && !res[i as usize][j as usize]
+                    {
+                        q.push_back((i, j));
+                        res[i as usize][j as usize] = true;
+                        mat[i as usize][j as usize] = distance;
+                    }
+                }
+            }
+            distance += 1;
+        }
+        mat
+    }
+}
+
+#[cfg(test)]
+mod lc_996 {
+    pub fn oranges_rotting(grid: Vec<Vec<i32>>) -> i32 {
+        let (mut visited, mut q, mut fresh, mut time, r, c) = (
+            vec![vec![false; grid[0].len()]; grid.len()],
+            std::collections::VecDeque::<(i32, i32)>::new(),
+            0,
+            0,
+            grid.len() as i32,
+            grid[0].len() as i32,
+        );
+        let dirs = vec![(0, 1), (0, -1), (1, 0), (-1, 0)];
+
+        for (i, row) in grid.iter().enumerate() {
+            for (j, &c) in row.iter().enumerate() {
+                if c == 1 {
+                    fresh += 1;
+                } else if c == 0 {
+                    visited[i][j] = true;
+                    q.push_back((i as i32, j as i32));
+                }
+            }
+        }
+
+        while !q.is_empty() {
+            for _ in 0..q.len() {
+                let (x, y) = q.pop_front().unwrap();
+                for (dx, dy) in dirs.iter() {
+                    let (i, j) = (dx + x, dy + y);
+                    if (0 <= i && i < r)
+                        && (0 <= j && j < c)
+                        && !visited[i as usize][j as usize]
+                        && grid[i as usize][j as usize] == 1
+                    {
+                        fresh -= 1;
+                        visited[i as usize][j as usize] = true;
+                        q.push_back((i, j));
+                    }
+                }
+            }
+            time += 1;
+        }
+
+        if fresh != 0 {
+            -1
+        } else {
+            time
+        }
+    }
+}
