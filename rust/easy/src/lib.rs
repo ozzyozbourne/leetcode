@@ -917,3 +917,29 @@ mod lc_996 {
         }
     }
 }
+
+pub fn is_anagram(s: String, t: String) -> bool {
+    if s.len() != t.len() {
+        return false;
+    }
+    let mut counter = vec![0; 26];
+
+    for (sc, tc) in s.bytes().zip(t.bytes()) {
+        counter[(sc - b'a') as usize] += 1;
+        counter[(tc - b'a') as usize] += 1;
+    }
+
+    counter.into_iter().all(|i| i == 0)
+}
+
+pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
+    let mut map = std::collections::HashMap::<i32, i32>::new();
+    for (i, v) in nums.into_iter().enumerate().map(|(i, v)| (i as i32, v)) {
+        let t = target - v;
+        if map.contains_key(&t) {
+            return vec![map.remove_entry(&t).unwrap().1, i];
+        }
+        map.insert(v, i);
+    }
+    vec![]
+}
