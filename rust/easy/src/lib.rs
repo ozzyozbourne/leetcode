@@ -943,3 +943,16 @@ pub fn two_sum(nums: Vec<i32>, target: i32) -> Vec<i32> {
     }
     vec![]
 }
+
+pub fn group_anagrams(strs: Vec<String>) -> Vec<Vec<String>> {
+    let mut map = std::collections::HashMap::<[u8; 26], Vec<String>>::new();
+
+    for s in strs {
+        let mut count = [0; 26];
+        for c in s.bytes() {
+            count[(c - b'a') as usize] += 1;
+        }
+        map.entry(count).or_default().push(s);
+    }
+    map.into_values().collect()
+}
