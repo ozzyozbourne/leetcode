@@ -956,3 +956,28 @@ pub fn group_anagrams(strs: Vec<String>) -> Vec<Vec<String>> {
     }
     map.into_values().collect()
 }
+
+pub fn product_except_self(nums: Vec<i32>) -> Vec<i32> {
+    let mut res = vec![0; nums.len()];
+    let (mut prefix, mut postfix) = (1, 1);
+    for (i, v) in nums.iter().enumerate() {
+        res[i] = prefix;
+        prefix *= v;
+    }
+    for (i, v) in (0..nums.len()).rev().zip(nums.into_iter().rev()) {
+        res[i] *= postfix;
+        postfix *= v;
+    }
+    res
+}
+
+pub fn is_valid_sudoku(board: Vec<Vec<char>>) -> bool {
+    let (mut rows, mut cols, mut squares) = (vec![0; 9], vec![0; 9], vec![0; 9]);
+    for i in 0..9 {
+        for j in 0..9 {
+            if board[i][j] == '.' {
+                continue;
+            }
+        }
+    }
+}

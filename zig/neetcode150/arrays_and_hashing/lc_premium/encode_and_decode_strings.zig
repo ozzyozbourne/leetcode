@@ -25,7 +25,7 @@ pub fn decode(arena: std.mem.Allocator, input: []const u8) ![]const []const u8 {
    return try res.toOwnedSlice();
 }
 
-test "lc_premium_01" {
+test "lc_premium" {
     const TestCase = struct {
         input: []const []const u8,
         expected: []const []const u8
