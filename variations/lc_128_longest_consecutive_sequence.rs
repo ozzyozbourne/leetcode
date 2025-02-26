@@ -4,8 +4,8 @@
 // 1 until the sequence end, record its value in a longest variable
 
 // Here we find the starting of the sequence
-pub fn longest_consecutive(nums: vec<i32>) -> i32 {
-    let (set, mut longest) = (nums.into_iter().collect::<std::collections::hashset<i32>>(), 0);
+pub fn longest_consecutive_1(nums: Vec<i32>) -> i32 {
+    let (set, mut longest) = (nums.into_iter().collect::<std::collections::HashSet<i32>>(), 0);
     for n in set.iter() {
         if !set.contains(&(n - 1)){
             let mut len = 1;
@@ -17,8 +17,8 @@ pub fn longest_consecutive(nums: vec<i32>) -> i32 {
 }
 
 // Here we find the ending of the sequence
-pub fn longest_consecutive(nums: vec<i32>) -> i32 {
-    let (set, mut longest) = (nums.into_iter().collect::<std::collections::hashset<i32>>(), 0);
+pub fn longest_consecutive_2(nums: Vec<i32>) -> i32 {
+    let (set, mut longest) = (nums.into_iter().collect::<std::collections::HashSet<i32>>(), 0);
     for n in set.iter() {
         if !set.contains(&(n + 1)){
             let mut len = 1;
@@ -33,3 +33,5 @@ pub fn longest_consecutive(nums: vec<i32>) -> i32 {
 // Hence two ways to solve this problem either find the starting number then
 // go the max by adding one, 
 // find the ending number and go the min by subtracting one.
+
+fn main() {}
