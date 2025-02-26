@@ -971,13 +971,27 @@ pub fn product_except_self(nums: Vec<i32>) -> Vec<i32> {
     res
 }
 
-pub fn is_valid_sudoku(board: Vec<Vec<char>>) -> bool {
-    let (mut rows, mut cols, mut squares) = (vec![0; 9], vec![0; 9], vec![0; 9]);
-    for i in 0..9 {
-        for j in 0..9 {
-            if board[i][j] == '.' {
-                continue;
+pub fn top_k_frequent(nums: Vec<i32>, k: i32) -> Vec<i32> {
+    let counter = nums.iter().fold(
+        std::collections::HashMap::<i32, usize>::new(),
+        |mut acc, &num| {
+            *acc.entry(num).or_default() += 1;
+            acc
+        },
+    );
+    let (mut freq, mut res) = (vec![vec![]; nums.len() + 1], vec![0; k as usize]);
+
+    for (k, v) in counter.into_iter() {
+        freq[v].push(k);
+    }
+
+    while let Some(num) = freq.pop() {
+        for n in num {
+            res.push(n);
+            if res.len() == k as usize {
+                return res;
             }
         }
     }
+    res
 }
