@@ -995,3 +995,38 @@ pub fn top_k_frequent(nums: Vec<i32>, k: i32) -> Vec<i32> {
     }
     res
 }
+
+pub fn top_k_frequent_using_min_heap(nums: Vec<i32>, size: i32) -> Vec<i32> {
+    use std::{
+        cmp::Reverse,
+        collections::{BinaryHeap, HashMap},
+    };
+    let count = nums
+        .iter()
+        .fold(HashMap::<i32, usize>::new(), |mut acc, &n| {
+            *acc.entry(n).or_default() += 1;
+            acc
+        });
+
+    let heap = count.into_iter().fold(
+        BinaryHeap::<Reverse<(usize, i32)>>::new(),
+        |mut acc, (k, v)| {
+            acc.push(Reverse((v, k)));
+            if acc.len() > size as usize {
+                _ = acc.pop();
+            }
+            acc
+        },
+    );
+
+    let mut result = heap.into_iter().fold(
+        Vec::with_capacity(size as usize),
+        |mut acc, Reverse((_, num))| {
+            acc.push(num);
+            acc
+        },
+    );
+
+    result.reverse();
+    result
+}
