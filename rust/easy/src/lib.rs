@@ -1030,3 +1030,20 @@ pub fn top_k_frequent_using_min_heap(nums: Vec<i32>, size: i32) -> Vec<i32> {
     result.reverse();
     result
 }
+pub fn is_palindrome(s: String) -> bool {
+    let (s, mut l, mut r) = (s.chars().collect::<Vec<char>>(), 0, s.len() - 1);
+    while l < r {
+        while l < r && s[l].is_ascii_alphanumeric() {
+            l += 1;
+        }
+        while l < r && s[r].is_ascii_alphanumeric() {
+            r -= 1;
+        }
+        if s[l].to_ascii_lowercase() != s[r].to_ascii_lowercase() {
+            return false;
+        }
+        l += 1;
+        r -= 1;
+    }
+    true
+}
