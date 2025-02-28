@@ -1047,3 +1047,30 @@ pub fn is_palindrome(s: String) -> bool {
     }
     true
 }
+
+pub fn trap(height: Vec<i32>) -> i32 {
+    let mut stack: Vec<usize> = Vec::new(); // Store indices, not heights
+    let mut res = 0;
+
+    for i in 0..height.len() {
+        while !stack.is_empty() && height[i] >= height[*stack.last().unwrap()] {
+            let mid_idx = stack.pop().unwrap();
+            let mid = height[mid_idx]; // Valley bottom height
+
+            if !stack.is_empty() {
+                let right = height[i];
+                let left = height[*stack.last().unwrap()];
+
+                // Calculate trapped water height and width
+                let h = std::cmp::min(right, left) - mid;
+                let w = (i - stack.last().unwrap() - 1) as i32;
+
+                res += h * w;
+            }
+        }
+
+        stack.push(i);
+    }
+
+    res
+}
