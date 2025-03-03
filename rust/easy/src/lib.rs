@@ -1074,3 +1074,23 @@ pub fn trap(height: Vec<i32>) -> i32 {
 
     res
 }
+
+pub fn character_replacement(s: String, k: i32) -> i32 {
+    let (mut l, mut res, mut maxf, mut counter, s) = (
+        0,
+        0,
+        0,
+        std::collections::HashMap::<char, usize>::new(),
+        s.chars().collect::<Vec<char>>(),
+    );
+    for (r, &v) in s.iter().enumerate() {
+        *counter.entry(v).or_default() += 1;
+        maxf = maxf.max(*counter.get(&v).unwrap());
+        while (r - l + 1 - maxf) as i32 > k {
+            *counter.get_mut(&s[l]).unwrap() -= 1;
+            l += 1;
+        }
+        res = res.max((r - l + 1) as i32);
+    }
+    res
+}
