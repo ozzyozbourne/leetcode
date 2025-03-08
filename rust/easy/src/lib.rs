@@ -1094,3 +1094,35 @@ pub fn character_replacement(s: String, k: i32) -> i32 {
     }
     res
 }
+
+pub fn max_sliding_window(nums: Vec<i32>, k: i32) -> Vec<i32> {
+    let k = k as usize;
+    let mut result = Vec::new();
+    let mut deque = std::collections::VecDeque::new(); // Store indices
+    let mut left = 0;
+
+    for right in 0..nums.len() {
+        // Remove elements smaller than current from the back
+        // (they can't be the maximum in future windows)
+        while !deque.is_empty() && deque.back().map_or(false, |&idx| nums[idx] < nums[right]) {
+            deque.pop_back();
+        }
+
+        deque.push_back(right);
+
+        // Remove elements outside the current window
+        if !deque.is_empty() && deque.front().map_or(false, |&idx| left > idx) {
+            deque.pop_front();
+        }
+
+        // When window reaches size k, add the maximum to the result
+        if right + 1 >= k {
+            if let Some(&idx) = deque.front() {
+                result.push(nums[idx]);
+            }
+            left += 1;
+        }
+    }
+
+    result
+}
