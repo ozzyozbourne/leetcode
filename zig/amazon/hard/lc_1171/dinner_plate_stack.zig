@@ -42,8 +42,7 @@ pub const DinnerPlates = struct{
     pub fn pop_at_stack(self: *DinnerPlates, index: usize) i32 {
         if (index > self.arr.items.len / self.capacity ) { return -1; }
         const start = self.capacity * index;
-        const end = @min(self.arr.items.len, start + self.capacity);
-        var iter: usize = 1;
+        const end:usize, var iter: usize = .{@min(self.arr.items.len, start + self.capacity), 1};
         for (start..end) |_| {
            if (self.arr.items[end - iter]) |val| {
                self.arr.items[end - iter] = null;

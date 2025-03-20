@@ -1,7 +1,7 @@
 const std = @import("std");
 
 pub fn encode(arena: std.mem.Allocator, input: []const []const u8) ![]const u8 {
-    var res = std.ArrayList(u8).init(arena); // array list of bytes
+    var res = std.ArrayList(u8).init(arena);
     for (input) |s| {
         try res.appendSlice(try std.fmt.allocPrint(arena, "{d}", .{s.len}));
         try res.append('#');
@@ -25,7 +25,7 @@ pub fn decode(arena: std.mem.Allocator, input: []const u8) ![]const []const u8 {
    return try res.toOwnedSlice();
 }
 
-test "lc_premium" {
+test "lc_271_tests" {
     const TestCase = struct {
         input: []const []const u8,
         expected: []const []const u8
