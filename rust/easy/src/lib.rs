@@ -1126,3 +1126,40 @@ pub fn max_sliding_window(nums: Vec<i32>, k: i32) -> Vec<i32> {
 
     result
 }
+struct Codec {}
+impl Codec {
+    fn new() -> Self {
+        Codec {}
+    }
+
+    fn encode(&self, strs: Vec<String>) -> String {
+        let mut result = String::new();
+        for s in strs {
+            result.push_str(&s.len().to_string());
+            result.push('#');
+            result.push_str(&s);
+        }
+        result
+    }
+
+    fn decode(&self, s: String) -> Vec<String> {
+        let (mut result, mut i, s) = (Vec::new(), 0, s.as_bytes());
+
+        while i < s.len() {
+            let mut j = i;
+            while s[j] != b'#' {
+                j += 1;
+            }
+            let len = std::str::from_utf8(&s[i..j])
+                .unwrap()
+                .parse::<usize>()
+                .unwrap();
+            i = j + 1;
+            j = i + len;
+            let decoded_str = std::str::from_utf8(&s[i..j]).unwrap();
+            result.push(decoded_str.to_string());
+            i = j;
+        }
+        result
+    }
+}

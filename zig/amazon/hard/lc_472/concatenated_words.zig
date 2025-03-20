@@ -45,6 +45,7 @@ test "lc_472" {
         const res = try find_all_concatenated_words_in_a_dict(std.testing.allocator, tc.input);
         defer std.testing.allocator.free(res);
 
-        try std.testing.expectEqualSlices([]const u8, tc.expected, res);
+        try std.testing.expectEqual(tc.expected.len, res.len);
+        for (tc.expected, res) |exp, act| { try std.testing.expectEqualStrings(exp, act); }
     }
 }
