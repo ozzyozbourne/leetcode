@@ -1163,3 +1163,49 @@ impl Codec {
         result
     }
 }
+
+pub fn min_window(s: String, t: String) -> String {
+    use std::collections::HashMap;
+    let (counter_t, mut counter_s) = (
+        t.chars().fold(HashMap::<char, usize>::new(), |mut acc, c| {
+            *acc.entry(c).or_default() += 1;
+            acc
+        }),
+        HashMap::<char, usize>::new(),
+    );
+
+    let (mut have, need, mut res, mut reslen, mut l, s_arr) = (
+        0,
+        counter_t.len(),
+        (0, 0),
+        usize::MAX,
+        0,
+        s.chars().collect::<Vec<char>>(),
+    );
+
+    for (r, c) in s.chars().enumerate() {
+        *counter_s.entry(c).or_default() += 1;
+        if counter_t.contains_key(&c) && counter_t.get(&c).unwrap() == counter_s.get(&c).unwrap() {
+            have += 1;
+        }
+        while have == need {
+            if r - l + 1 < reslen {
+                res = (l, r);
+                reslen = r - l + 1;
+            }
+            *counter_s.get_mut(&s_arr[l]).unwrap() -= 1;
+            if counter_t.contains_key(&s_arr[l])
+                && counter_s.get(&s_arr[l]).unwrap() < counter_t.get(&s_arr[l]).unwrap()
+            {
+                have -= 1;
+            }
+            l += 1;
+        }
+    }
+
+    if reslen == usize::MAX {
+        "".to_string()
+    } else {
+        s[res.0..res.1 + 1].to_string()
+    }
+}

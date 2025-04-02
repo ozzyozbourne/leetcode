@@ -13,8 +13,8 @@ pub fn min_window(gpa: std.mem.Allocator, s: []const u8, t: []const u8) ![]const
     var counter_s = std.AutoArrayHashMap(u8, usize).init(gpa);
     defer counter_s.deinit();
     
-    var have: usize, var need:usize, var res:[2]usize, var reslen: usize, var l: usize = .{0, 0, .{0, 0}, std.math.maxInt(usize), 0};
-    need = counter_t.count();
+    var have: usize, const need:usize, var res:[2]usize, var reslen: usize, var l: usize = 
+        .{0, counter_t.count(), .{0, 0}, std.math.maxInt(usize), 0};
 
     for (s, 0..) |c, r| {
        const gop = try counter_s.getOrPut(c); 
