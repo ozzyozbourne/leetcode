@@ -1564,3 +1564,57 @@ pub fn vec_to_tree(v: Vec<Option<i32>>) -> Option<Rc<RefCell<TreeNode>>> {
         }
     }
 }
+
+pub fn amount_of_time(root: T, start: i32) -> i32 {
+    use std::{
+        collections::{HashMap, HashSet, VecDeque},
+        iter::once,
+    };
+
+    let (mut queue, mut minutes, mut visited, mut tree_map) = (
+        once(start).collect::<VecDeque<i32>>(),
+        0,
+        HashSet::new(),
+        HashMap::new(),
+    );
+
+    convert(root.clone(), 0, &mut tree_map);
+    while !queue.is_empty() {
+        for _ in 0..queue.len() {
+            for n in tree_map.remove(&queue.pop_front().unwrap()).unwrap() {
+                if !visited.contains(&n) {
+                    visited.insert(n);
+                    queue.push_back(n);
+                }
+            }
+        }
+        minutes += 1;
+    }
+    fn convert(current: T, parent: i32, tree_map: &mut HashMap<i32, HashSet<i32>>) {
+        if current.is_none() {
+            return;
+        }
+        let adj_list = tree_map.entry(b!(current).val).or_default();
+        if parent != 0 {
+            adj_list.insert(parent);
+        }
+        if let Some(node) = current.clone().unwrap().borrow().left.clone() {
+            adj_list.insert(node.borrow().val);
+        }
+        if let Some(node) = current.clone().unwrap().borrow().right.clone() {
+            adj_list.insert(node.borrow().val);
+        }
+
+        convert(
+            current.clone().unwrap().borrow().left.clone(),
+            current.clone().unwrap().borrow().val,
+            tree_map,
+        );
+        convert(
+            current.clone().unwrap().borrow().right.clone(),
+            current.clone().unwrap().borrow().val,
+            tree_map,
+        );
+    }
+    minutes - 1
+}
