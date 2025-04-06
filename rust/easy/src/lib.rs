@@ -1209,3 +1209,20 @@ pub fn min_window(s: String, t: String) -> String {
         s[res.0..res.1 + 1].to_string()
     }
 }
+
+pub fn unequal_triplets(nums: Vec<i32>) -> i32 {
+    let (mut res, mut left, mut right) = (0, 0, nums.len() as i32);
+    let mut counter = nums.into_iter().fold(
+        std::collections::HashMap::<i32, i32>::new(),
+        |mut acc, i| {
+            *acc.entry(i).or_default() += 1;
+            acc
+        },
+    );
+    for (_, frq) in counter.drain() {
+        right -= frq;
+        res += left * frq * right;
+        left += frq;
+    }
+    res
+}
