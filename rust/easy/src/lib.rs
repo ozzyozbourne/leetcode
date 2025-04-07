@@ -1226,3 +1226,48 @@ pub fn unequal_triplets(nums: Vec<i32>) -> i32 {
     }
     res
 }
+use std::collections::VecDeque;
+pub fn shortest_alternating_paths(
+    n: i32,
+    red_edges: Vec<Vec<i32>>,
+    blue_edges: Vec<Vec<i32>>,
+) -> Vec<i32> {
+    let mut adj = red_edges
+        .into_iter()
+        .map(|i| (i[0] as usize, i[1] as usize))
+        .fold(vec![Vec::new(); n as usize], |mut acc, (src, dst)| {
+            acc[src].push((dst, 0));
+            acc
+        });
+
+    adj = blue_edges
+        .into_iter()
+        .map(|i| (i[0] as usize, i[1] as usize))
+        .fold(adj, |mut acc, (src, dst)| {
+            acc[src].push((dst, 1));
+            acc
+        });
+
+    let (mut res, mut visited, mut queue) = (
+        vec![-1; n as usize],
+        vec![[false, false]; n as usize],
+        VecDeque::new(),
+    );
+    (visited[0][0], visited[0][1], res[0]) = (true, true, 0);
+    queue.push_back((0, 0, 2));
+
+    while !queue.is_empty() {
+        let (node, steps, prev_color) = queue.pop_front().unwrap();
+        for &(neighbour, color) in adj.get(node).unwrap() {
+            if !visited[neighbour][color] && color != prev_color {
+                visited[neighbour][color] = true;
+                queue.push_back((neighbour, steps + 1, color));
+                if res[neighbour] == -1 {
+                    res[neighbour] = steps + 1;
+                }
+            }
+        }
+    }
+
+    res
+}
