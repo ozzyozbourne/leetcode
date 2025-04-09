@@ -1271,3 +1271,56 @@ pub fn shortest_alternating_paths(
 
     res
 }
+
+pub fn shortest_path(grid: Vec<Vec<i32>>, k: i32) -> i32 {
+    use std::collections::{HashSet, VecDeque};
+    let (rows, cols) = (grid.len(), grid[0].len());
+    let (target, state) = ((rows - 1, cols - 1), (0_usize, 0_usize, k));
+
+    if k as usize >= rows + cols - 2 {
+        return (rows + cols - 2) as _;
+    }
+    let (mut queue, mut seen) = (
+        vec![(0, state)]
+            .into_iter()
+            .collect::<VecDeque<(usize, (usize, usize, i32))>>(),
+        vec![state]
+            .into_iter()
+            .collect::<HashSet<(usize, usize, i32)>>(),
+    );
+
+    while !queue.is_empty() {
+        let (steps, (row, col, k)) = queue.pop_front().unwrap();
+        if row == target.0 && col == target.1 {
+            return steps as _;
+        }
+        for (dx, dy) in [(-1, 0), (1, 0), (0, -1), (0, 1)] {
+            let (nr, nc) = (row as i32 + dx, col as i32 + dy);
+            if nr >= 0 && nr < rows as i32 && nc >= 0 && nc < cols as i32 {
+                let new_state = (nr as usize, nc as usize, k - grid[nr as usize][nc as usize]);
+                if k >= 0 && !seen.contains(&new_state) {
+                    seen.insert(new_state);
+                    queue.push_back((steps + 1, (nr as usize, nc as usize, k)));
+                }
+            }
+        }
+    }
+    -1
+}
+
+pub fn eval_rpn(mut tokens: Vec<String>) -> i32 {
+    fn rpc(tokens: &mut Vec<String>) -> i32 {
+        let token = tokens.pop().unwrap();
+        if !["+", "-", "/", "*"].contains(&token.as_str()) {
+            return token.parse().unwrap();
+        }
+        let (right, left) = (rpc(tokens), rpc(tokens));
+        match token.as_str() {
+            "+" => left + right,
+            "-" => left - right,
+            "*" => left * right,
+            _ => left / right,
+        }
+    }
+    rpc(&mut tokens)
+}
