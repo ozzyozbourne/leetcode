@@ -1324,3 +1324,30 @@ pub fn eval_rpn(mut tokens: Vec<String>) -> i32 {
     }
     rpc(&mut tokens)
 }
+
+pub fn generate_parenthesis(n: i32) -> Vec<String> {
+    let (mut res, mut stack) = (Vec::new(), Vec::with_capacity(n as usize * 2));
+    fn gn(
+        res: &mut Vec<String>,
+        stack: &mut Vec<String>,
+        n: i32,
+        open_paren: i32,
+        closed_paren: i32,
+    ) {
+        if open_paren == closed_paren && closed_paren == n {
+            return;
+        }
+        if open_paren < n {
+            stack.push("(".to_string());
+            gn(res, stack, n, open_paren + 1, closed_paren);
+            _ = stack.pop();
+        }
+        if closed_paren < open_paren {
+            stack.push(")".to_string());
+            gn(res, stack, n, open_paren, closed_paren + 1);
+            _ = stack.pop();
+        }
+    }
+    gn(&mut res, &mut stack, n, 0, 0);
+    res
+}
