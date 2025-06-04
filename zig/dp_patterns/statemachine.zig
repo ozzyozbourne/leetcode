@@ -104,28 +104,30 @@ test "lc_123" {
 }
 
 fn best_time_to_buy_and_sell_stocks_iv(gpa: std.mem.Allocator, prices: []const i32, k: i32) i32 {
-    if (@as(usize, @intCast(k)) > prices.len) {
+    if (@as(usize, @intCast(2*k)) > prices.len) {
         var sum: i32 = 0;
         for (1..prices.len) |i| {
-            sum += @max(0, prices[i] - prices[i-1]);
+            if (prices[i] > prices[i - 1]) { sum += prices[i] - prices[i - 1]; }
         }
         return sum;
     }
-    var buy = gpa.alloc(i32, @intCast(k + 1)) catch unreachable;
-    var sell = gpa.alloc(i32, @intCast(k + 1)) catch unreachable;
-    defer {    
-        gpa.free(buy);
-        gpa.free(sell);
+
+    var dp = gpa.alloc(i32, @intCast(2*k+1)) catch unreachable;
+    defer gpa.free(dp); 
+
+    for(1..@intCast(2*k+1)) |i| {
+        if (i % 2 == 0) { dp[i] = std.math.minInt(i32); } 
+        else { dp[i] = 0; }
     }
-    @memset(buy, std.math.minInt(i32));
-    @memset(sell, 0);
+
     for (prices) |price| {
-        for (1..@intCast(k+1)) |i| {
-            buy[i] = @max(buy[i], sell[i - 1] - price);
-            sell[i] = @max(sell[i], buy[i] + price);
+        for (0..@intCast(2*k+1)) |i| {
+            if (i == 0) { dp[i] = @max(dp[i], -price); }
+            else if (i % 2 == 0) { dp[i] = @max(dp[i], dp[i - 1] - price); }
+            else { dp[i] = @max(dp[i], dp[i - 1] + price); }
         }
     }
-    return sell[@intCast(k)];
+    return dp[@intCast(2*k-1)];
 }
 
 test "lc_188" {
@@ -151,3 +153,10 @@ test "lc_188" {
     }
 }
 
+// fn best_time_to_buy_and_sell_stock_with_transaction_fee(prices: []const i32, fee: i32) i32 {
+//
+// }
+//
+// test "lc_714" {
+//
+// }
