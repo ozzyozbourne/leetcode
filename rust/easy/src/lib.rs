@@ -1351,3 +1351,20 @@ pub fn generate_parenthesis(n: i32) -> Vec<String> {
     gn(&mut res, &mut stack, n, 0, 0);
     res
 }
+
+pub fn group_anagram(strs: Vec<String>) -> Vec<Vec<String>> {
+    strs.into_iter()
+        .fold(
+            std::collections::HashMap::<[u8; 26], Vec<String>>::new(),
+            |mut m, s| {
+                let cnt = s.as_bytes().iter().fold([0; 26], |mut cnt, c| {
+                    cnt[(c - b'a') as usize] += 1;
+                    cnt
+                });
+                m.entry(cnt).or_default().push(s);
+                m
+            },
+        )
+        .into_values()
+        .collect()
+}

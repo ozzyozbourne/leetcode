@@ -20,6 +20,6 @@ lc_136 :: proc(t: ^testing.T) {
 	for testcase in testcases {
 		actual := single_number(testcase.nums)
 		log.infof("\nActual Value -> %d Expected Value -> %d\n", actual, testcase.expected)
-		testing.expect(t, single_number(testcase.nums) == testcase.expected)
+		testing.expect(t, actual == testcase.expected)
 	}
 }
