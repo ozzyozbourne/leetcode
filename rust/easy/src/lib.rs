@@ -1368,3 +1368,43 @@ pub fn group_anagram(strs: Vec<String>) -> Vec<Vec<String>> {
         .into_values()
         .collect()
 }
+
+pub fn rotate(matrix: &mut Vec<Vec<i32>>) {
+    matrix.reverse();
+
+    let n = matrix.len();
+    for i in 0..n {
+        for j in i + 1..n {
+            // This is the most memory-efficient approach
+            unsafe {
+                let pi = &mut matrix[i][j] as *mut i32;
+                let pj = &mut matrix[j][i] as *mut i32;
+                std::mem::swap(&mut *pi, &mut *pj);
+            }
+        }
+    }
+}
+
+pub fn multiply(n1: String, n2: String) -> String {
+    if n1 == "0" || n2 == "0" {
+        return "0".to_string();
+    }
+    let mut res = vec![0; n1.len() + n2.len()];
+
+    for (i1, c1) in n1.chars().rev().into_iter().enumerate() {
+        for (i2, c2) in n2.chars().rev().into_iter().enumerate() {
+            res[i1 + i2] += c1.to_digit(10).unwrap() * c2.to_digit(10).unwrap();
+            res[i1 + i2 + 1] += res[i1 + i2] / 10;
+            res[i1 + i2] %= 10;
+        }
+    }
+
+    while res.len() > 1 && res.last() == Some(&0) {
+        _ = res.pop();
+    }
+
+    res.into_iter()
+        .rev()
+        .map(|d| char::from_digit(d, 10).unwrap())
+        .collect()
+}
