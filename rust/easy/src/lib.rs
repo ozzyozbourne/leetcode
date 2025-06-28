@@ -1391,13 +1391,15 @@ pub fn multiply(n1: String, n2: String) -> String {
     }
     let mut res = vec![0; n1.len() + n2.len()];
 
-    for (i1, c1) in n1.chars().rev().into_iter().enumerate() {
-        for (i2, c2) in n2.chars().rev().into_iter().enumerate() {
+    for (i1, c1) in n1.chars().rev().enumerate() {
+        for (i2, c2) in n2.chars().rev().enumerate() {
             res[i1 + i2] += c1.to_digit(10).unwrap() * c2.to_digit(10).unwrap();
             res[i1 + i2 + 1] += res[i1 + i2] / 10;
             res[i1 + i2] %= 10;
         }
     }
+
+    println!("iam still alive {n1} {n2}");
 
     while res.len() > 1 && res.last() == Some(&0) {
         _ = res.pop();
@@ -1407,4 +1409,20 @@ pub fn multiply(n1: String, n2: String) -> String {
         .rev()
         .map(|d| char::from_digit(d, 10).unwrap())
         .collect()
+}
+
+pub fn spiral_order(m: Vec<Vec<i32>>) -> Vec<i32> {
+    let (mut r, mut c, mut d, mut res, mut steps) =
+        (0, -1, 0, Vec::new(), vec![m.len(), m[0].len()]);
+    let dir: Vec<(i32, i32)> = vec![(0, 1), (1, 0), (0, -1), (-1, 0)];
+    while steps[d % 2] > 0 {
+        for _ in 0..steps[d % 2] {
+            r += dir[d].0;
+            c += dir[d].1;
+            res.push(m[r as usize][c as usize]);
+        }
+        steps[d % 2] -= 1;
+        d = (d + 1) % 4;
+    }
+    res
 }
