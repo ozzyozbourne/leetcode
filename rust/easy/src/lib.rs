@@ -910,11 +910,7 @@ mod lc_996 {
             time += 1;
         }
 
-        if fresh != 0 {
-            -1
-        } else {
-            time
-        }
+        if fresh != 0 { -1 } else { time }
     }
 }
 
@@ -1425,4 +1421,84 @@ pub fn spiral_order(m: Vec<Vec<i32>>) -> Vec<i32> {
         d = (d + 1) % 4;
     }
     res
+}
+
+mod lc9000 {
+    use std::{cell::RefCell, rc::Rc};
+
+    macro_rules! b {
+        ($n:expr) => {
+            $n.as_ref().unwrap().borrow()
+        };
+    }
+
+    #[derive(Debug, PartialEq, Eq)]
+    struct TreeNode {
+        val: i32,
+        left: Option<Rc<RefCell<TreeNode>>>,
+        right: Option<Rc<RefCell<TreeNode>>>,
+    }
+    type T = Option<Rc<RefCell<TreeNode>>>;
+
+    impl TreeNode {
+        fn new(val: i32) -> Self {
+            TreeNode {
+                val,
+                left: None,
+                right: None,
+            }
+        }
+    }
+
+    struct Codec {
+        v: Vec<String>,
+        i: usize,
+    }
+
+    impl Codec {
+        fn new() -> Self {
+            Codec {
+                v: Vec::new(),
+                i: 0,
+            }
+        }
+        fn serialize(&mut self, mut root: T) -> String {
+            while let Some(node) = root.clone() {
+                if node.borrow().left.is_none() {
+                    self.v.push(node.borrow().val.to_string());
+                    root = node.borrow().right.clone();
+                } else {
+                    let mut pre = node.borrow().left.clone();
+                    while b!(pre).right.is_some() && b!(pre).right != root {
+                        pre = pre.unwrap().borrow().right.clone();
+                    }
+                    if b!(pre).right.is_some() {
+                        _ = pre.unwrap().borrow_mut().right.take();
+                        root = node.borrow().right.clone();
+                    } else {
+                        pre.unwrap().borrow_mut().right = root.clone();
+                        root = node.borrow().left.clone();
+                    }
+                }
+            }
+            self.v.push("N".to_string());
+            self.v.join(",")
+        }
+
+        fn deserialize(&mut self, data: String) -> T {
+            self.v = data.split(",").map(|x| x.to_string()).collect();
+            fn dfs(c: &mut Codec) -> T {
+                if c.v[c.i].as_str() == "N" {
+                    None
+                } else {
+                    let mut root = TreeNode::new(c.v[c.i].parse().unwrap());
+                    c.i += 1;
+                    root.right = dfs(c);
+                    root.left = dfs(c);
+                    Some(Rc::new(RefCell::new(root)))
+                }
+            }
+            dfs(self)
+        }
+    }
 }
