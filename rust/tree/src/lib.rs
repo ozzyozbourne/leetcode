@@ -1618,3 +1618,70 @@ pub fn amount_of_time(root: T, start: i32) -> i32 {
     }
     minutes - 1
 }
+
+macro_rules! b {
+    ($n:expr) => {
+        $n.as_ref().unwrap().borrow()
+    };
+}
+pub fn level_order(root: T) -> Vec<Vec<i32>> {
+    let (mut queue, mut res) = (VecDeque::new(), Vec::new());
+    queue.push_back(root);
+
+    while !queue.is_empty() {
+        let mut level = Vec::new();
+        for _ in 0..queue.len() {
+            let node = queue.pop_front().unwrap();
+            if node.is_some() {
+                level.push(b!(node).val);
+                queue.push_back(b!(node).left.clone());
+                queue.push_back(b!(node).right.clone());
+            }
+        }
+        if !level.is_empty() {
+            res.push(level);
+        }
+    }
+    res
+}
+
+pub fn longest_univalue_path(root: T) -> i32 {
+    fn dfs(root: T, pv: i32, m: &mut i32) -> i32 {
+        match root {
+            None => 0,
+            Some(n) => {
+                let (l, r) = (
+                    dfs(n.borrow().left.clone(), n.borrow().val, m),
+                    dfs(n.borrow().right.clone(), n.borrow().val, m),
+                );
+                *m = (*m).max(l + r);
+                if pv == n.borrow().val {
+                    l.max(r) + 1
+                } else {
+                    0
+                }
+            }
+        }
+    }
+    let mut res = 0;
+    _ = dfs(root, -1, &mut res);
+    res
+}
+
+pub fn path_sum(root: T, ts: i32) -> i32 {
+    fn dfs(root: T, map: &mut HashMap<i64, i32>, ts: &i64, mut curr_sum: i64) -> i32 {
+        match root {
+            None => 0,
+            Some(n) => {
+                curr_sum += n.borrow().val as i64;
+                let mut count = *map.get(&(curr_sum - *ts)).unwrap_or(&0);
+                *map.entry(curr_sum).or_default() += 1;
+                count += dfs(n.borrow().left.clone(), map, ts, curr_sum);
+                count += dfs(n.borrow().right.clone(), map, ts, curr_sum);
+                _ = map.entry(curr_sum).and_modify(|a| *a -= 1);
+                count
+            }
+        }
+    }
+    dfs(root, &mut HashMap::from([(0, 1)]), &(ts as i64), 0)
+}
