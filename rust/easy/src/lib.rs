@@ -1502,3 +1502,27 @@ mod lc9000 {
         }
     }
 }
+
+pub fn max_coins(mut nums: Vec<i32>) -> i32 {
+    use std::collections::HashMap;
+    nums.insert(0, 1);
+    nums.push(1);
+    fn dfs(nums: &Vec<i32>, dp: &mut HashMap<(usize, usize), i32>, l: usize, r: usize) -> i32 {
+        match (l, r) {
+            _ if l > r => 0,
+            _ if dp.contains_key(&(l, r)) => *dp.get(&(l, r)).unwrap(),
+            _ => {
+                for i in l..=r {
+                    let mut coins = nums[l - 1] + nums[i] + nums[r + 1];
+                    coins += dfs(nums, dp, l, i - 1) + dfs(nums, dp, i + 1, r);
+                    _ = dp
+                        .entry((l, r))
+                        .and_modify(|v| *v = (*v).max(coins))
+                        .or_insert(coins);
+                }
+                *dp.get(&(l, r)).unwrap()
+            }
+        }
+    }
+    dfs(&nums, &mut HashMap::new(), 1, nums.len() - 2)
+}
