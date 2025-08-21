@@ -1526,3 +1526,42 @@ pub fn max_coins(mut nums: Vec<i32>) -> i32 {
     }
     dfs(&nums, &mut HashMap::new(), 1, nums.len() - 2)
 }
+
+pub fn longest_increasing_path(matrix: Vec<Vec<i32>>) -> i32 {
+    use std::collections::HashMap;
+    let (rows, cols) = (matrix.len(), matrix[0].len());
+    let mut dp = HashMap::new();
+
+    fn dfs(
+        r: i32,
+        c: i32,
+        prev: i32,
+        matrix: &Vec<Vec<i32>>,
+        dp: &mut HashMap<(i32, i32), i32>,
+    ) -> i32 {
+        let (rows, cols) = (matrix.len() as i32, matrix[0].len() as i32);
+        if r < 0 || r >= rows || c < 0 || c >= cols || matrix[r as usize][c as usize] <= prev {
+            return 0;
+        }
+        if let Some(&res) = dp.get(&(r, c)) {
+            return res;
+        }
+
+        let val = matrix[r as usize][c as usize];
+        let res = 1 + [(r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)]
+            .into_iter()
+            .map(|(nr, nc)| dfs(nr, nc, val, matrix, dp))
+            .max()
+            .unwrap();
+
+        dp.insert((r, c), res);
+        res
+    }
+
+    for r in 0..rows {
+        for c in 0..cols {
+            dfs(r as i32, c as i32, -1, &matrix, &mut dp);
+        }
+    }
+    *dp.values().max().unwrap_or(&0)
+}
