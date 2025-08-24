@@ -1565,3 +1565,21 @@ pub fn longest_increasing_path(matrix: Vec<Vec<i32>>) -> i32 {
     }
     *dp.values().max().unwrap_or(&0)
 }
+
+pub fn rob(nums: Vec<i32>) -> i32 {
+    let mut dp = vec![-1; nums.len()];
+    fn dfs(nums: &Vec<i32>, dp: &mut Vec<i32>, i: usize, end: usize) -> i32 {
+        if i >= end {
+            0
+        } else if dp[i] != -1 {
+            dp[i]
+        } else {
+            dp[i] = dfs(nums, dp, i + 1, end).max(nums[i] + dfs(nums, dp, i + 2, end));
+            dp[i]
+        }
+    }
+    dfs(&nums, &mut dp, 0, nums.len() - 1).max({
+        dp.clear();
+        dfs(&nums, &mut dp, 1, nums.len())
+    })
+}
