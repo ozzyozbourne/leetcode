@@ -1583,3 +1583,38 @@ pub fn rob(nums: Vec<i32>) -> i32 {
         dfs(&nums, &mut dp, 1, nums.len())
     })
 }
+
+pub fn count_substrings(s: String) -> i32 {
+    fn expand_center(s: &Vec<char>, mut l: i32, mut r: usize) -> i32 {
+        let mut res = 0;
+        while l >= 0 && r < s.len() && s[l as usize] == s[r] {
+            r += 1;
+            l -= 1;
+            res += 1;
+        }
+        res
+    }
+    let s = s.chars().collect::<Vec<char>>();
+    (0..s.len())
+        .into_iter()
+        .map(|i| expand_center(&s, i as i32, i) + expand_center(&s, i as i32, i + 1))
+        .sum()
+}
+
+pub fn longest_palindrome(s: String) -> String {
+    let (mut idx, mut len, s) = (0, 0, s.chars().collect::<Vec<char>>());
+    let mut exp_center = |mut l, mut r| {
+        while l >= 0 && r < s.len() && s[l as usize] == s[r] {
+            let cur_len = r - l as usize + 1;
+            if cur_len > len {
+                (idx, len) = (l as usize, cur_len);
+            }
+            l -= 1;
+            r += 1;
+        }
+    };
+    for i in 0..s.len() {
+        (_, _) = (exp_center(i as i32, i), exp_center(i as i32, i + 1));
+    }
+    s[idx..idx + len].into_iter().collect()
+}
