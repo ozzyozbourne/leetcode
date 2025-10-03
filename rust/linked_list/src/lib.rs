@@ -271,58 +271,26 @@ mod lc_145_binary_tree_postorder_traversal {
     }
 }
 
-#[cfg(test)]
-mod lc_897_increasing_order_search_tree {
-
-    use crate::{vec_to_tree, Node};
-
-    fn increasing_bst(root: Option<Node>) -> Option<Node> {}
-
-    #[test]
-    fn test_lc_897_one() {
-        assert_eq!(
-            increasing_bst(vec_to_tree(vec![
-                Some(5),
-                Some(3),
-                Some(6),
-                Some(2),
-                Some(4),
-                None,
-                Some(8),
-                Some(1),
-                None,
-                None,
-                None,
-                Some(7),
-                Some(9)
-            ])),
-            vec_to_tree(vec![
-                Some(1),
-                None,
-                Some(2),
-                None,
-                Some(3),
-                None,
-                Some(4),
-                None,
-                Some(5),
-                None,
-                Some(6),
-                None,
-                Some(7),
-                None,
-                Some(8),
-                None,
-                Some(9)
-            ])
-        );
+pub fn reverse_k_group(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>> {
+    let mut curr = &head;
+    for _ in 0..k {
+        match curr {
+            Some(node) => curr = &node.next,
+            None => return head,
+        }
     }
 
-    #[test]
-    fn test_lc_897_two() {
-        assert_eq!(
-            increasing_bst(vec_to_tree(vec![Some(5), Some(1), Some(7)])),
-            vec_to_tree(vec![Some(1), None, Some(5), None, Some(7), None])
-        );
+    let (mut prev, mut curr) = (None, head);
+    let org_head_ptr = curr.as_mut().unwrap().as_mut() as *mut ListNode;
+
+    for _ in 0..k {
+        let next = curr.as_mut().unwrap().next.take();
+        curr.as_mut().unwrap().next = prev;
+        (prev, curr) = (curr, next);
     }
+
+    unsafe {
+        (*org_head_ptr).next = reverse_k_group(curr, k);
+    }
+    prev
 }
