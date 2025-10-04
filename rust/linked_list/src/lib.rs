@@ -125,7 +125,7 @@ pub fn vec_to_tree(v: Vec<Option<i32>>) -> Option<Rc<RefCell<TreeNode>>> {
 #[cfg(test)]
 mod lc_114_flatten_binary_tree_to_linked_list {
 
-    use crate::{vec_to_tree, Node, Rc};
+    use crate::{Node, Rc, vec_to_tree};
 
     fn flatten(root: &mut Option<Node>) {
         fn dfs(node: &mut Option<Node>) -> Option<Node> {
@@ -194,7 +194,7 @@ mod lc_114_flatten_binary_tree_to_linked_list {
 #[cfg(test)]
 mod lc_144_binary_tree_preorder_traversal {
 
-    use crate::{vec_to_tree, Node};
+    use crate::{Node, vec_to_tree};
 
     fn preorder_traversal(root: Option<Node>) -> Vec<i32> {
         fn dfs(root: Option<Node>, res: &mut Vec<i32>) {
@@ -234,7 +234,7 @@ mod lc_144_binary_tree_preorder_traversal {
 #[cfg(test)]
 mod lc_145_binary_tree_postorder_traversal {
 
-    use crate::{vec_to_tree, Node};
+    use crate::{Node, vec_to_tree};
 
     fn postorder_traversal(root: Option<Node>) -> Vec<i32> {
         fn dfs(root: Option<Node>, res: &mut Vec<i32>) {
@@ -281,7 +281,7 @@ pub fn reverse_k_group(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNo
     }
 
     let (mut prev, mut curr) = (None, head);
-    let org_head_ptr = curr.as_mut().unwrap().as_mut() as *mut ListNode;
+    let unsf_head = curr.as_mut().unwrap().as_mut() as *mut ListNode;
 
     for _ in 0..k {
         let next = curr.as_mut().unwrap().next.take();
@@ -290,7 +290,130 @@ pub fn reverse_k_group(head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNo
     }
 
     unsafe {
-        (*org_head_ptr).next = reverse_k_group(curr, k);
+        (*unsf_head).next = reverse_k_group(curr, k);
+    }
+    prev
+}
+
+pub fn merge_k_lists(mut lists: Vec<Option<Box<ListNode>>>) -> Option<Box<ListNode>> {
+    fn divide(l: usize, r: usize, lists: &mut Vec<Option<Box<ListNode>>>) -> Option<Box<ListNode>> {
+        if l > r {
+            None
+        } else if l == r {
+            lists[l].take()
+        } else {
+            let m = l + (r - l) / 2;
+            let (left, right) = (divide(l, m, lists), divide(m + 1, r, lists));
+            conquer(left, right)
+        }
+    }
+
+    fn conquer(
+        mut left: Option<Box<ListNode>>,
+        mut right: Option<Box<ListNode>>,
+    ) -> Option<Box<ListNode>> {
+        let mut dummy = Box::new(ListNode::new(0));
+        let mut current = &mut dummy;
+
+        while left.is_some() && right.is_some() {
+            if left.as_ref().unwrap().val <= right.as_ref().unwrap().val {
+                current.next = left;
+                current = current.next.as_mut().unwrap();
+                left = current.next.take();
+            } else {
+                current.next = right;
+                current = current.next.as_mut().unwrap();
+                right = current.next.take();
+            }
+        }
+
+        current.next = left.or(right);
+        dummy.next
+    }
+
+    if lists.is_empty() {
+        None
+    } else {
+        divide(0, lists.len() - 1, &mut lists)
+    }
+}
+
+pub fn merge_two_lists(
+    mut left: Option<Box<ListNode>>,
+    mut right: Option<Box<ListNode>>,
+) -> Option<Box<ListNode>> {
+    let conquer = || {
+        let mut dummy = Box::new(ListNode::new(0));
+        let mut curr = &mut dummy;
+
+        while left.is_some() && right.is_some() {
+            if left.as_ref().unwrap().val <= right.as_ref().unwrap().val {
+                curr.next = left;
+                curr = curr.next.as_mut().unwrap();
+                left = curr.next.take();
+            } else {
+                curr.next = right;
+                curr = curr.next.as_mut().unwrap();
+                right = curr.next.take();
+            }
+        }
+
+        curr.next = left.or(right);
+
+        dummy.next
+    };
+    let res = conquer();
+    res
+}
+
+pub fn delete_duplicates(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+    let mut curr = &mut head;
+    while let Some(c) = curr.as_ref()
+        && let Some(ref n) = curr.as_ref().unwrap().next
+    {
+        if c.val == n.val {
+            curr.as_mut().unwrap().next = curr.as_mut().unwrap().next.as_mut().unwrap().next.take();
+        } else {
+            curr = &mut curr.as_mut().unwrap().next;
+        }
+    }
+    head
+}
+
+pub fn remove_elements(head: Option<Box<ListNode>>, val: i32) -> Option<Box<ListNode>> {
+    let mut dummy = Box::new(ListNode { next: head, val: 0 });
+    let mut curr = &mut dummy;
+    while let Some(ref mut n) = curr.next {
+        if n.val == val {
+            curr.next = n.next.take();
+        } else {
+            curr = curr.next.as_mut().unwrap();
+        }
+    }
+    dummy.next
+}
+type T = Option<Box<ListNode>>;
+pub fn remove_elements1(head: T, val: i32) -> T {
+    let mut dummy = Box::new(ListNode { next: head, val: 0 });
+    let mut curr = &mut dummy;
+
+    while let Some(ref mut node) = curr.next {
+        if node.val != val {
+            curr.next = node.next.take();
+        } else {
+            curr = curr.next.as_mut().unwrap();
+        }
+    }
+    dummy.next
+}
+
+pub fn reverse_list(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+    let mut prev = None;
+    while let Some(curr) = head.as_mut() {
+        let next = curr.next.take();
+        curr.next = prev;
+        prev = head;
+        head = next;
     }
     prev
 }
