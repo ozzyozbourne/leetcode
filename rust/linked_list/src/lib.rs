@@ -417,3 +417,32 @@ pub fn reverse_list(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
     }
     prev
 }
+
+pub fn middle_node(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+    let raw_head = Box::into_raw(head.unwrap());
+
+    unsafe {
+        let (mut slow, mut fast, mut prev) = (raw_head, raw_head, std::ptr::null_mut());
+
+        while !fast.is_null() && (*fast).next.is_some() {
+            prev = slow;
+            slow = (*slow).next.as_ref().unwrap().as_ref() as *const _ as *mut _;
+            fast = (*fast)
+                .next
+                .as_ref()
+                .unwrap()
+                .next
+                .as_ref()
+                .map(|n| n.as_ref() as *const _ as *mut _)
+                .unwrap_or(std::ptr::null_mut());
+        }
+
+        if prev.is_null() {
+            return Some(Box::from_raw(raw_head));
+        }
+
+        let second_half = (*prev).next.take();
+        drop(Box::from_raw(raw_head));
+        second_half
+    }
+}
