@@ -505,3 +505,35 @@ pub fn get_decimal_value(mut head: Option<Box<ListNode>>) -> i32 {
         .enumerate()
         .fold(0, |acc, (i, val)| acc + val * 2_i32.pow(i as u32)) as i32
 }
+
+pub fn remove_nth_from_end(head: Option<Box<ListNode>>, mut n: i32) -> Option<Box<ListNode>> {
+    let dummy = Box::new(ListNode { next: head, val: 0 });
+    let (mut slow, mut fast) = (&dummy, &dummy.next);
+
+    while n > 0 {
+        (fast, n) = (&fast.as_ref().unwrap().next, n - 1);
+    }
+    while let Some(f) = fast {
+        (fast, slow) = (&f.next, &slow.next.as_ref().unwrap());
+    }
+
+    let cutter = slow.as_ref() as *const ListNode as *mut ListNode;
+    unsafe {
+        (*cutter).next = (*cutter).next.take().unwrap().next;
+    }
+
+    dummy.next
+}
+
+pub fn swap_pairs(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+    let mut dummy = Box::new(ListNode { next: head, val: 0 });
+    let mut prev = &mut dummy;
+    while prev.next.is_some() && b!(prev.next).next.is_some() {
+        let (second, mut first) = (bm!(prev.next).next.take(), prev.next.take());
+        prev.next = second;
+        bm!(first).next = bm!(prev.next).next.take();
+        bm!(prev.next).next = first;
+        prev = bm!(bm!(prev.next).next);
+    }
+    dummy.next
+}
