@@ -442,21 +442,30 @@ pub fn middle_node(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
     }
 }
 
+type MP = *mut ListNode;
+type CP = *const ListNode;
+macro_rules! b {
+    ($n:expr) => {
+        $n.as_ref().unwrap()
+    };
+}
+macro_rules! bm {
+    ($n:expr) => {
+        $n.as_mut().unwrap()
+    };
+}
 pub fn is_palindrome(head: Option<Box<ListNode>>) -> bool {
     let (mut slow, mut fast, mut prev) = (&head, &head, &None);
 
-    while let Some(ref f1) = fast.as_ref()
+    while let Some(f1) = fast
         && let Some(ref f2) = f1.next
     {
-        (prev, fast, slow) = (slow, &f2.next, &slow.as_ref().unwrap().next);
+        (prev, fast, slow) = (slow, &f2.next, &b!(slow).next);
     }
-    if slow.is_none() {
+    if prev.is_none() {
         return true;
     }
-    let (usf_mid, usf_prev): (*mut ListNode, *mut ListNode) = (
-        slow.as_ref().unwrap().as_ref() as *const _ as *mut _,
-        prev.as_ref().unwrap().as_ref() as *const _ as *mut _,
-    );
+    let (usf_mid, usf_prev) = (b!(slow).as_ref() as CP as MP, b!(prev).as_ref() as CP as MP);
 
     let mut sec_head = match fast {
         &Some(_) => unsafe {
@@ -469,20 +478,30 @@ pub fn is_palindrome(head: Option<Box<ListNode>>) -> bool {
 
     let mut prev = None;
     while sec_head.is_some() {
-        let next = sec_head.as_mut().unwrap().next.take();
-        sec_head.as_mut().unwrap().next = prev;
-        prev = sec_head;
-        sec_head = next;
+        let next = bm!(sec_head).next.take();
+        bm!(sec_head).next = prev;
+        (prev, sec_head) = (sec_head, next);
     }
 
     let (mut left, mut right) = (&head, &prev);
-
     while right.is_some() {
-        if left.as_ref().unwrap().val != right.as_ref().unwrap().val {
+        if b!(left).val != b!(right).val {
             return false;
         }
-        (left, right) = (&left.as_ref().unwrap().next, &right.as_ref().unwrap().next);
+        (left, right) = (&b!(left).next, &b!(right).next);
+    }
+    true
+}
+
+pub fn get_decimal_value(mut head: Option<Box<ListNode>>) -> i32 {
+    let mut bits = Vec::new();
+    while let Some(current) = head {
+        bits.push(current.val);
+        head = current.next;
     }
 
-    return true;
+    bits.into_iter()
+        .rev()
+        .enumerate()
+        .fold(0, |acc, (i, val)| acc + val * 2_i32.pow(i as u32)) as i32
 }
