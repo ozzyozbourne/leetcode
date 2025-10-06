@@ -1,4 +1,4 @@
-use std::{cell::RefCell, collections::VecDeque, rc::Rc};
+use std::{cell::RefCell, collections::VecDeque, ptr::null_mut, rc::Rc};
 pub type Node = Rc<RefCell<TreeNode>>;
 
 #[derive(Debug, PartialEq, Eq)]
@@ -418,10 +418,10 @@ pub fn reverse_list(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
     prev
 }
 
-pub fn middle_node(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-    let raw_head = Box::into_raw(head.unwrap());
+pub fn middle_node(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+    let raw_head = head.as_mut().unwrap().as_mut() as *mut ListNode;
     unsafe {
-        let (mut slow, mut fast, mut prev) = (raw_head, raw_head, std::ptr::null_mut());
+        let (mut slow, mut fast, mut prev) = (raw_head, raw_head, null_mut());
 
         while !fast.is_null()
             && let Some(ref mut f) = (*fast).next
@@ -431,15 +431,58 @@ pub fn middle_node(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
                 .next
                 .as_mut()
                 .map(|n| n.as_mut() as *mut _)
-                .unwrap_or(std::ptr::null_mut());
+                .unwrap_or(null_mut());
         }
 
         if prev.is_null() {
-            Some(Box::from_raw(raw_head))
+            head
         } else {
-            let res = (*prev).next.take();
-            drop(Box::from_raw(raw_head));
-            res
+            (*prev).next.take()
         }
     }
+}
+
+pub fn is_palindrome(head: Option<Box<ListNode>>) -> bool {
+    let (mut slow, mut fast, mut prev) = (&head, &head, &None);
+
+    while let Some(ref f1) = fast.as_ref()
+        && let Some(ref f2) = f1.next
+    {
+        (prev, fast, slow) = (slow, &f2.next, &slow.as_ref().unwrap().next);
+    }
+    if slow.is_none() {
+        return true;
+    }
+    let (usf_mid, usf_prev): (*mut ListNode, *mut ListNode) = (
+        slow.as_ref().unwrap().as_ref() as *const _ as *mut _,
+        prev.as_ref().unwrap().as_ref() as *const _ as *mut _,
+    );
+
+    let mut sec_head = match fast {
+        &Some(_) => unsafe {
+            let res = (*usf_mid).next.take();
+            drop((*usf_prev).next.take());
+            res
+        },
+        &None => unsafe { (*usf_prev).next.take() },
+    };
+
+    let mut prev = None;
+    while sec_head.is_some() {
+        let next = sec_head.as_mut().unwrap().next.take();
+        sec_head.as_mut().unwrap().next = prev;
+        prev = sec_head;
+        sec_head = next;
+    }
+
+    let (mut left, mut right) = (&head, &prev);
+
+    while right.is_some() {
+        if left.as_ref().unwrap().val != right.as_ref().unwrap().val {
+            return false;
+        }
+        (left, right) = (&left.as_ref().unwrap().next, &right.as_ref().unwrap().next);
+    }
+
+    return true;
 }
