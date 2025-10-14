@@ -537,3 +537,25 @@ pub fn swap_pairs(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
     }
     dummy.next
 }
+macro_rules! rmp {
+    ($n:expr) => {
+        $n.as_ref().unwrap().as_ref() as *const ListNode as *mut ListNode
+    };
+}
+
+pub fn rotate_right(mut head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListNode>> {
+    let (mut curr, mut count) = (&head, 1);
+    while curr.as_ref().unwrap().next.is_some() {
+        (curr, count) = (&b!(curr).next, count + 1);
+    }
+    let (last, mut curr) = (rmp!(curr), &mut head);
+
+    for _ in 1..(count - (k % count)) {
+        curr = &mut bm!(curr).next;
+    }
+    let res = bm!(curr).next.take();
+    unsafe {
+        (*last).next = head;
+    }
+    res
+}
