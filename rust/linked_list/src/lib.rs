@@ -560,9 +560,26 @@ pub fn rotate_right(mut head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListN
     res
 }
 
-pub fn partition(head: Option<Box<ListNode>>, x: i32) -> Option<Box<ListNode>> {
-    let (mut ld, mut gd) = (ListNode::new(0), ListNode::new(0));
-    let x = 10;
-    let _y = (&raw const x).cast_mut();
-    None
+pub fn partition(mut head: Option<Box<ListNode>>, x: i32) -> Option<Box<ListNode>> {
+    let (mut lh, mut gh) = (ListNode::new(0), ListNode::new(0));
+    let (mut lm, mut gm) = (&raw mut lh, &raw mut gh);
+    while let Some(mut node) = head {
+        head = node.next.take();
+        if node.val < x {
+            unsafe {
+                (*lm).next = Some(node);
+                lm = (*lm).next.as_mut().unwrap().as_mut();
+            }
+        } else {
+            unsafe {
+                (*gm).next = Some(node);
+                gm = (*gm).next.as_mut().unwrap().as_mut();
+            }
+        }
+    }
+    unsafe {
+        (*gm).next = None;
+        (*lm).next = gh.next;
+    }
+    lh.next
 }
