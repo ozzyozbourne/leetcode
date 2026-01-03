@@ -559,3 +559,10 @@ pub fn rotate_right(mut head: Option<Box<ListNode>>, k: i32) -> Option<Box<ListN
     }
     res
 }
+
+pub fn partition(head: Option<Box<ListNode>>, x: i32) -> Option<Box<ListNode>> {
+    let (mut ld, mut gd) = (ListNode::new(0), ListNode::new(0));
+    let x = 10;
+    let _y = (&raw const x).cast_mut();
+    None
+}
