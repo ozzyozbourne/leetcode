@@ -583,3 +583,5 @@ pub fn partition(mut head: Option<Box<ListNode>>, x: i32) -> Option<Box<ListNode
     }
     lh.next
 }
+
+pub fn delete_duplicates(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {}
