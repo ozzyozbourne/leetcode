@@ -1,4 +1,9 @@
-use std::{cell::RefCell, collections::VecDeque, ptr::null_mut, rc::Rc};
+use std::{
+    cell::RefCell,
+    collections::VecDeque,
+    ptr::{null, null_mut},
+    rc::Rc,
+};
 pub type Node = Rc<RefCell<TreeNode>>;
 
 #[derive(Debug, PartialEq, Eq)]
@@ -584,4 +589,34 @@ pub fn partition(mut head: Option<Box<ListNode>>, x: i32) -> Option<Box<ListNode
     lh.next
 }
 
-pub fn delete_duplicates(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {}
+macro_rules! next_ptr {
+    ($node:expr) => {
+        match (*$node).next.as_mut() {
+            Some(node) => node.as_mut(),
+            _ => core::ptr::null_mut(),
+        }
+    };
+}
+
+pub fn delete_duplicates_1(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+    let mut dummy = Box::new(ListNode { val: 0, next: head });
+    let (mut prev, mut head) = (&raw mut *dummy.as_mut(), next_ptr!(dummy));
+    while !head.is_null() {
+        unsafe {
+            if let Some(ref node) = (*head).next
+                && node.val == (*head).val
+            {
+                while let Some(ref node) = (*head).next
+                    && node.val == (*head).val
+                {
+                    head = (*head).next.as_mut().unwrap().as_mut();
+                }
+                (*prev).next = (*head).next.take();
+                head = next_ptr!(prev)
+            } else {
+                (prev, head) = ((*prev).next.as_mut().unwrap().as_mut(), next_ptr!(head));
+            }
+        }
+    }
+    dummy.next
+}
