@@ -622,22 +622,20 @@ pub fn delete_duplicates_1(head: Option<Box<ListNode>>) -> Option<Box<ListNode>>
 }
 
 pub fn insertion_sort_list(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-    if head.as_ref().unwrap().next.as_ref().is_some() {
-        let (mut dummy, mut curr_head) = (ListNode::new(0), head.as_mut().unwrap().next.take());
-        while head.is_some() {
-            let mut prev = &mut dummy;
-            while prev.next.is_some()
-                && prev.next.as_ref().unwrap().val < head.as_ref().unwrap().val
-            {
-                prev = prev.next.as_mut().unwrap();
+    let mut dummy = ListNode::new(0);
+    loop {
+        let mut prev = &mut dummy;
+        match head {
+            Some(ref mut node) => {
+                let next = node.next.take();
+                while prev.next.is_some() && prev.next.as_ref().unwrap().val < node.val {
+                    prev = prev.next.as_mut().unwrap()
+                }
+                node.next = prev.next.take();
+                prev.next = head;
+                head = next;
             }
-            head.as_mut().unwrap().next = prev.next.take();
-            prev.next = head.take();
-            head = curr_head.take();
-            curr_head = head.as_mut().unwrap().next.take();
+            None => break dummy.next,
         }
-        dummy.next
-    } else {
-        head
     }
 }
